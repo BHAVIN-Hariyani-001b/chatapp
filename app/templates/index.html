@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %} Login {% endblock %}
+
+{% block content %} 
+    <div class="chat-container">
+        <div class="container">
+            <div class="user-list-container">
+                <header class="user-chat-header">
+                   <div class="user-chat-header-logo">
+                        <div class="Back">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </div>
+                        <a href="/">
+                            <img src="{{ url_for('static',filename='image/logo.png') }}" alt="">
+                        </a>
+                        <div class="user-chat-header-icon">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </div>
+                   </div>
+                   <div class="user-chat-search-container">
+                        <div class="user-chat-search">
+                            <div class="user-chat-search-icon">
+                                <svg viewBox="0 0 20 20" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>search-refreshed-thin</title><path fill-rule="evenodd" clip-rule="evenodd" d="M4.36653 4.3664C5.36341 3.36953 6.57714 2.87 8.00012 2.87C9.42309 2.87 10.6368 3.36953 11.6337 4.3664C12.6306 5.36329 13.1301 6.57724 13.1301 8.00062C13.1301 8.57523 13.0412 9.11883 12.8624 9.63057C12.6972 10.1038 12.4733 10.5419 12.1909 10.9444L16.5712 15.3247C16.7454 15.4989 16.8385 15.7046 16.8385 15.9375C16.8385 16.1704 16.7454 16.3761 16.5712 16.5503C16.396 16.7254 16.1866 16.8175 15.948 16.8175C15.7095 16.8175 15.5001 16.7254 15.3249 16.5503L10.9448 12.1906C10.5421 12.4731 10.104 12.697 9.63069 12.8623C9.11895 13.041 8.57535 13.13 8.00074 13.13C6.57736 13.13 5.36341 12.6305 4.36653 11.6336C3.36965 10.6367 2.87012 9.42297 2.87012 8C2.87012 6.57702 3.36965 5.36328 4.36653 4.3664ZM8.00012 4.63C7.06198 4.63 6.26877 4.95685 5.61287 5.61275C4.95698 6.26865 4.63012 7.06186 4.63012 8C4.63012 8.93813 4.95698 9.73134 5.61287 10.3872C6.26877 11.0431 7.06198 11.37 8.00012 11.37C8.93826 11.37 9.73146 11.0431 10.3874 10.3872C11.0433 9.73134 11.3701 8.93813 11.3701 8C11.3701 7.06186 11.0433 6.26865 10.3874 5.61275C9.73146 4.95685 8.93826 4.63 8.00012 4.63Z" fill="currentColor"></path></svg>
+                            </div>
+                            <div class="user-chat-search-input">   
+                                <input type="text" name="/search" id="search" class="search" placeholder="Search User...">
+                            </div>
+                            <button type="button" class="user-chat-search-icon search-clear-icon" id="clear-search">
+                                <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>ic-close</title><path d="M12 13.4L7.09999 18.3C6.91665 18.4834 6.68332 18.575 6.39999 18.575C6.11665 18.575 5.88332 18.4834 5.69999 18.3C5.51665 18.1167 5.42499 17.8834 5.42499 17.6C5.42499 17.3167 5.51665 17.0834 5.69999 16.9L10.6 12L5.69999 7.10005C5.51665 6.91672 5.42499 6.68338 5.42499 6.40005C5.42499 6.11672 5.51665 5.88338 5.69999 5.70005C5.88332 5.51672 6.11665 5.42505 6.39999 5.42505C6.68332 5.42505 6.91665 5.51672 7.09999 5.70005L12 10.6L16.9 5.70005C17.0833 5.51672 17.3167 5.42505 17.6 5.42505C17.8833 5.42505 18.1167 5.51672 18.3 5.70005C18.4833 5.88338 18.575 6.11672 18.575 6.40005C18.575 6.68338 18.4833 6.91672 18.3 7.10005L13.4 12L18.3 16.9C18.4833 17.0834 18.575 17.3167 18.575 17.6C18.575 17.8834 18.4833 18.1167 18.3 18.3C18.1167 18.4834 17.8833 18.575 17.6 18.575C17.3167 18.575 17.0833 18.4834 16.9 18.3L12 13.4Z" fill="currentColor"></path></svg>
+                            </button>
+                        </div>
+                   </div>
+                </header>
+                <div class="user-chat-list-container">
+                    <div class="user-list">
+                        {% for user in user_list %}
+                            {% if user._id in users_followed.following  %}
+                                <a href="{{ url_for('chat.chat',user_id=user._id) }}" class="user">
+                                    <div class="user-img">
+                                        <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
+                                    </div>
+                                    <div class="user-name-label">
+                                        <p>{{ user.name }}</p>
+                                        <p>{{ user.about }}</p>
+                                    </div>
+                                </a> 
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="user-search-list">
+                        <!-- user search list show to user is search and show list in this section  -->
+                    </div>
+                    <div class="user-profile-show">
+                        <div href="#" class="user">
+                            <div class="user-img">
+                                <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
+                            </div>
+                            <div class="user-name-label user-profile-label">
+                               <div class="user-chat-id">
+                                    <p>{{ session['name'] }}</p>
+                                    <p>{{ session['about'] }}</p>
+                               </div>
+                                <div class="user-chat-logout">
+                                    <form action="{{ url_for('auth.logout') }}" method="GET">
+                                        <button type="submit">Logout</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="user-chat-container">
+                {% if user %}    
+                    <div class="user-message-header">
+                        <div class="user">
+                            <div class="user-img">
+                                <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
+                            </div>
+                            <div class="user-name-label">
+                                <p>{{ user.name }}</p>
+                                <p>{{ user.about }}</p>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="user-message-container">
+                    </div>
+                    <div class="user-message-send-container">
+                       <div class="user-message">
+                            <div class="user-attach">
+                                <svg viewBox="0 0 24 24" height="24" width="24" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>plus-rounded</title><path d="M11 13H5.5C4.94772 13 4.5 12.5523 4.5 12C4.5 11.4477 4.94772 11 5.5 11H11V5.5C11 4.94772 11.4477 4.5 12 4.5C12.5523 4.5 13 4.94772 13 5.5V11H18.5C19.0523 11 19.5 11.4477 19.5 12C19.5 12.5523 19.0523 13 18.5 13H13V18.5C13 19.0523 12.5523 19.5 12 19.5C11.4477 19.5 11 19.0523 11 18.5V13Z" fill="currentColor"></path></svg>
+                            </div>
+                            <div class="user-select-emoji">
+                                <svg viewBox="0 0 24 24" height="24" width="24" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>expressions</title><path d="M8.49893 10.2521C9.32736 10.2521 9.99893 9.5805 9.99893 8.75208C9.99893 7.92365 9.32736 7.25208 8.49893 7.25208C7.6705 7.25208 6.99893 7.92365 6.99893 8.75208C6.99893 9.5805 7.6705 10.2521 8.49893 10.2521Z" fill="currentColor"></path><path d="M17.0011 8.75208C17.0011 9.5805 16.3295 10.2521 15.5011 10.2521C14.6726 10.2521 14.0011 9.5805 14.0011 8.75208C14.0011 7.92365 14.6726 7.25208 15.5011 7.25208C16.3295 7.25208 17.0011 7.92365 17.0011 8.75208Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M16.8221 19.9799C15.5379 21.2537 13.8087 21.9781 12 22H9.27273C5.25611 22 2 18.7439 2 14.7273V9.27273C2 5.25611 5.25611 2 9.27273 2H14.7273C18.7439 2 22 5.25611 22 9.27273V11.8141C22 13.7532 21.2256 15.612 19.8489 16.9776L16.8221 19.9799ZM14.7273 4H9.27273C6.36068 4 4 6.36068 4 9.27273V14.7273C4 17.6393 6.36068 20 9.27273 20H11.3331C11.722 19.8971 12.0081 19.5417 12.0058 19.1204L11.9935 16.8564C11.9933 16.8201 11.9935 16.784 11.9941 16.7479C11.0454 16.7473 10.159 16.514 9.33502 16.0479C8.51002 15.5812 7.84752 14.9479 7.34752 14.1479C7.24752 13.9479 7.25585 13.7479 7.37252 13.5479C7.48919 13.3479 7.66419 13.2479 7.89752 13.2479L13.5939 13.2479C14.4494 12.481 15.5811 12.016 16.8216 12.0208L19.0806 12.0296C19.5817 12.0315 19.9889 11.6259 19.9889 11.1248V9.07648H19.9964C19.8932 6.25535 17.5736 4 14.7273 4ZM14.0057 19.1095C14.0066 19.2605 13.9959 19.4089 13.9744 19.5537C14.5044 19.3124 14.9926 18.9776 15.4136 18.5599L18.4405 15.5576C18.8989 15.1029 19.2653 14.5726 19.5274 13.996C19.3793 14.0187 19.2275 14.0301 19.0729 14.0295L16.8138 14.0208C15.252 14.0147 13.985 15.2837 13.9935 16.8455L14.0057 19.1095Z" fill="currentColor"></path></svg>
+                            </div>
+                            <div class="user-message-send-input-container">
+                                <input type="text" name="" id="">
+                            </div>
+                            <div class="user-send-message send">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </div>
+                       </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="{{ url_for('static',filename='js/search.js')}}"></script>
+{% endblock %}
