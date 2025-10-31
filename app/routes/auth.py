@@ -1,5 +1,5 @@
 from flask import Blueprint,render_template,redirect,url_for,flash,session
-from app.forms import LoginForm,RegistrastionFrom
+from app.forms import LoginForm,RegistrationForm
 from app import mongo # Import the mongo instanceed in __init__.py file 
 from app.routes.chat import get_all
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -20,8 +20,8 @@ def insert_user(db, name, email, password):
         'followers':[],
         'following':['68f9b3f9b2baa9fbe8ad2bd9'],
         'about':'Hi, I am use venture',
-        'lastSeen': datetime.utcnow(),
-        'createdAt': datetime.utcnow()
+        'lastSeen': datetime.now(),
+        'createdAt': datetime.now()
     }
     users_collection.insert_one(user_data)
 
@@ -73,15 +73,12 @@ def login():
         password = form.password.data
         user = get_user_by_email(mongo.db,email)
 
-        if user != None:
-            session['name'] = user['name']
-            session['about'] = user['about']
-
-        session['email'] = email
-
-
         if user and check_password_hash(user['password'],password):
             user_status_online(mongo.db,email)
+            session['name'] = user['name']
+            session['about'] = user['about'] 
+            session['email'] = email
+            session['user_id'] = user['_id']
             # flash("Login Successful","success")
             return redirect(url_for('auth.dashboard'))  # Redirect to a dashboard or home page
         else:
@@ -98,7 +95,7 @@ def login():
 def register():
     """Registration route."""
 
-    form = RegistrastionFrom()
+    form = RegistrationForm()
     if form.validate_on_submit():
         if get_user_by_email(mongo.db,form.email.data):
             flash("This email is already in use. Please try a different email address.", "error")
@@ -119,6 +116,6 @@ def logout():
     if 'email' in session:
         email = session['email']
         user_status_offline(mongo.db,email)
-        session.pop('email',None)
+        session.clear()
         flash("Logged out successfully!", "success")
     return redirect(url_for('auth.login'))

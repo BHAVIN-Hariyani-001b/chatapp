@@ -43,7 +43,7 @@ searchInput.addEventListener("keyup", () => {
       if(data.result.length > 0){
         data.result.forEach(user => {
           let a = document.createElement('div')
-          a.className = "user"
+            a.className = "user"
             a.href =  `${user._id}`;
             a.innerHTML =  `
                   <div class="user-img">
@@ -67,7 +67,6 @@ searchInput.addEventListener("keyup", () => {
       console.log(error);
     }
   }, 300);
-
 });
 
 BackBtn.addEventListener("click", () => {
@@ -96,10 +95,10 @@ async function followUser(userId) {
     // console.log(btn);
     if (result.status === "followed") {
       btn.innerHTML = "Unfollow";
-      btn.style.background = '#383b3b'
+      btn.style.background = '#383b3b';
     } else if (result.status === "unfollowed") {
-      btn.innerHTML = "Follow";0
-      btn.style.background = '#708DFF'
+      btn.innerHTML = "Follow";
+      btn.style.background = '#708DFF';
     }
   } catch(error){ 
     console.log(error);

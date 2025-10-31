@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} Login {% endblock %}
+{% block title %} venture {% endblock %}
 
 {% block content %} 
     <div class="chat-container">
@@ -35,9 +35,10 @@
                     <div class="user-list">
                         {% for user in user_list %}
                             {% if user._id in users_followed.following  %}
-                                <a href="{{ url_for('chat.chat',user_id=user._id) }}" class="user">
+                                <a href="{{ url_for('chat.chat',user_id=user._id) }}" class="user" data-user-id="{{ user._id }}">
                                     <div class="user-img">
                                         <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
+                                        <span class="online-status" data-user-id="{{ user._id }}" style="display: none;"></span>
                                     </div>
                                     <div class="user-name-label">
                                         <p>{{ user.name }}</p>
@@ -51,7 +52,7 @@
                         <!-- user search list show to user is search and show list in this section  -->
                     </div>
                     <div class="user-profile-show">
-                        <div href="#" class="user">
+                        <div class="user">
                             <div class="user-img">
                                 <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
                             </div>
@@ -80,11 +81,26 @@
                             </div>
                             <div class="user-name-label">
                                 <p>{{ user.name }}</p>
-                                <p>{{ user.about }}</p>
+                                <p class="user-status-text">{{ user.about }}</p>
                             </div>
                         </div> 
                     </div>
                     <div class="user-message-container">
+                        <div class="message" id="messages">
+                           {% if messages %}
+                                <div id="chat-box">
+                                    {% for msg in messages %}
+                                        <div class="msg {% if msg.sender_id == users_followed._id %}sent{% else %}received{% endif %}">
+                                            <p>{{ msg.message }}</p>
+                                            <p class="time">{{ msg.timestamp.strftime('%H:%M %p') }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p style="text-align: center; color: #999; padding: 20px;">No messages yet. Start chatting!</p>
+                            {% endif %}
+                        </div>
+                        <div id="typing-indicator" style="padding: 10px 20px; color: #999; font-style: italic; min-height: 30px;"></div>
                     </div>
                     <div class="user-message-send-container">
                        <div class="user-message">
@@ -95,9 +111,9 @@
                                 <svg viewBox="0 0 24 24" height="24" width="24" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>expressions</title><path d="M8.49893 10.2521C9.32736 10.2521 9.99893 9.5805 9.99893 8.75208C9.99893 7.92365 9.32736 7.25208 8.49893 7.25208C7.6705 7.25208 6.99893 7.92365 6.99893 8.75208C6.99893 9.5805 7.6705 10.2521 8.49893 10.2521Z" fill="currentColor"></path><path d="M17.0011 8.75208C17.0011 9.5805 16.3295 10.2521 15.5011 10.2521C14.6726 10.2521 14.0011 9.5805 14.0011 8.75208C14.0011 7.92365 14.6726 7.25208 15.5011 7.25208C16.3295 7.25208 17.0011 7.92365 17.0011 8.75208Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M16.8221 19.9799C15.5379 21.2537 13.8087 21.9781 12 22H9.27273C5.25611 22 2 18.7439 2 14.7273V9.27273C2 5.25611 5.25611 2 9.27273 2H14.7273C18.7439 2 22 5.25611 22 9.27273V11.8141C22 13.7532 21.2256 15.612 19.8489 16.9776L16.8221 19.9799ZM14.7273 4H9.27273C6.36068 4 4 6.36068 4 9.27273V14.7273C4 17.6393 6.36068 20 9.27273 20H11.3331C11.722 19.8971 12.0081 19.5417 12.0058 19.1204L11.9935 16.8564C11.9933 16.8201 11.9935 16.784 11.9941 16.7479C11.0454 16.7473 10.159 16.514 9.33502 16.0479C8.51002 15.5812 7.84752 14.9479 7.34752 14.1479C7.24752 13.9479 7.25585 13.7479 7.37252 13.5479C7.48919 13.3479 7.66419 13.2479 7.89752 13.2479L13.5939 13.2479C14.4494 12.481 15.5811 12.016 16.8216 12.0208L19.0806 12.0296C19.5817 12.0315 19.9889 11.6259 19.9889 11.1248V9.07648H19.9964C19.8932 6.25535 17.5736 4 14.7273 4ZM14.0057 19.1095C14.0066 19.2605 13.9959 19.4089 13.9744 19.5537C14.5044 19.3124 14.9926 18.9776 15.4136 18.5599L18.4405 15.5576C18.8989 15.1029 19.2653 14.5726 19.5274 13.996C19.3793 14.0187 19.2275 14.0301 19.0729 14.0295L16.8138 14.0208C15.252 14.0147 13.985 15.2837 13.9935 16.8455L14.0057 19.1095Z" fill="currentColor"></path></svg>
                             </div>
                             <div class="user-message-send-input-container">
-                                <input type="text" name="" id="">
+                                <input type="text" name="message" id="messageInput" autocomplete="off" placeholder="Type a message...">
                             </div>
-                            <div class="user-send-message send">
+                            <div class="user-send-message send" id="user-click">
                                 <i class="fa-solid fa-paper-plane"></i>
                             </div>
                        </div>
@@ -109,4 +125,374 @@
     </div>
 
     <script src="{{ url_for('static',filename='js/search.js')}}"></script>
+    <!-- Add this JavaScript to your index.html template -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+<script>
+    const socket = io();
+    const currentUserId = "{{ users_followed._id }}";
+    const currentUsername = "{{ session['name'] }}";
+    const receiverId = "{{ user._id if user else '' }}";
+    const receiverName = "{{ user.name if user else '' }}";
+    
+    let typingTimer;
+    let isTyping = false;
+    let heartbeatInterval;
+
+    // Connect to server
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        
+        // Announce user is online
+        socket.emit('user_online', {
+            user_id: currentUserId,
+            username: currentUsername
+        });
+        
+        // Join chat room if receiver exists
+        if (receiverId) {
+            socket.emit('join_chat', {
+                user_id: currentUserId,
+                receiver_id: receiverId
+            });
+        }
+        
+        // Start heartbeat to maintain online status
+        startHeartbeat();
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+        stopHeartbeat();
+    });
+
+    // ===== HEARTBEAT TO MAINTAIN ONLINE STATUS =====
+    function startHeartbeat() {
+        // Send heartbeat every 30 seconds
+        heartbeatInterval = setInterval(() => {
+            socket.emit('heartbeat', {
+                user_id: currentUserId
+            });
+        }, 30000); // 30 seconds
+    }
+
+    function stopHeartbeat() {
+        if (heartbeatInterval) {
+            clearInterval(heartbeatInterval);
+        }
+    }
+
+    // ===== HANDLE USER STATUS CHANGES =====
+    socket.on('user_status_change', (data) => {
+        console.log('User status change:', data);
+        
+        updateUserStatus(data.user_id, data.status, data.last_seen);
+    });
+
+    // Receive list of online users when connecting
+    socket.on('online_users_list', (data) => {
+        console.log('Online users:', data.users);
+        
+        data.users.forEach(user => {
+            updateUserStatus(user.user_id, 'online');
+        });
+    });
+
+    // Handle joined room response
+    socket.on('joined_room', (data) => {
+        console.log('Joined room:', data);
+        
+        // Update receiver status in chat header
+        if (receiverId) {
+            updateChatHeaderStatus(data.receiver_online, data.receiver_last_seen);
+        }
+    });
+
+    // ===== UPDATE UI FUNCTIONS =====
+    function updateUserStatus(userId, status, lastSeen = null) {
+        // Update online indicators in user list sidebar
+        const onlineIndicators = document.querySelectorAll(`[data-user-id="${userId}"].online-status`);
+        onlineIndicators.forEach(indicator => {
+            indicator.style.display = status === 'online' ? 'block' : 'none';
+        });
+        
+        // Update status in chat header if this is the current chat user
+        if (userId === receiverId) {
+            updateChatHeaderStatus(status === 'online', lastSeen);
+        }
+    }
+
+    function updateChatHeaderStatus(isOnline, lastSeen = null) {
+        const statusText = document.querySelector('.user-status-text');
+        if (!statusText) return;
+        
+        if (isOnline) {
+            statusText.textContent = 'Online';
+            statusText.style.color = '#31a24c';
+            statusText.style.fontWeight = '600';
+        } else {
+            if (lastSeen) {
+                const lastSeenDate = new Date(lastSeen);
+                const now = new Date();
+                const diffMinutes = Math.floor((now - lastSeenDate) / 60000);
+                
+                let lastSeenText;
+                if (diffMinutes < 1) {
+                    lastSeenText = 'Just now';
+                } else if (diffMinutes < 60) {
+                    lastSeenText = `${diffMinutes} min ago`;
+                } else if (diffMinutes < 1440) {
+                    const hours = Math.floor(diffMinutes / 60);
+                    lastSeenText = `${hours} hour${hours > 1 ? 's' : ''} ago`;
+                } else {
+                    const days = Math.floor(diffMinutes / 1440);
+                    lastSeenText = `${days} day${days > 1 ? 's' : ''} ago`;
+                }
+                
+                statusText.textContent = `Last seen ${lastSeenText}`;
+            } else {
+                statusText.textContent = 'Offline';
+            }
+            statusText.style.color = '#999';
+            statusText.style.fontWeight = 'normal';
+        }
+    }
+
+    // ===== CHECK SPECIFIC USER STATUS =====
+    function checkUserStatus(userId) {
+        socket.emit('check_user_status', { user_id: userId });
+    }
+
+    socket.on('user_status_response', (data) => {
+        console.log('User status response:', data);
+        updateUserStatus(data.user_id, data.online ? 'online' : 'offline', data.last_seen);
+    });
+
+    // ===== REQUEST ALL ONLINE USERS =====
+    function requestOnlineUsers() {
+        socket.emit('get_online_users');
+    }
+
+    // ===== BROWSER VISIBILITY API =====
+    // Detect when user switches tabs or minimizes browser
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            console.log('User left the tab');
+            // Optional: You can pause heartbeat or reduce frequency
+        } else {
+            console.log('User returned to the tab');
+            // Resume normal heartbeat
+            socket.emit('heartbeat', { user_id: currentUserId });
+        }
+    });
+
+    // ===== HANDLE PAGE UNLOAD =====
+    window.addEventListener('beforeunload', () => {
+        // Leave chat room when navigating away
+        if (receiverId) {
+            socket.emit('leave_chat', {
+                user_id: currentUserId,
+                receiver_id: receiverId
+            });
+        }
+        
+        // Socket.IO will handle disconnect automatically
+        stopHeartbeat();
+    });
+
+    // ===== HANDLE RECEIVING MESSAGES =====
+    socket.on('receive_message', (data) => {
+        console.log('Message received:', data);
+        if (data.sender_id === receiverId || data.sender_id === currentUserId) {
+            addMessage(data);
+            
+            // Mark as read if chat is open
+            if (data.sender_id === receiverId) {
+                socket.emit('mark_as_read', {
+                    sender_id: receiverId,
+                    receiver_id: currentUserId
+                });
+            }
+        }
+    });
+
+    // ===== HANDLE TYPING INDICATORS =====
+    socket.on('user_typing', (data) => {
+        if (data.user_id === receiverId) {
+            document.getElementById('typing-indicator').textContent = `${receiverName} is typing...`;
+        }
+    });
+
+    socket.on('user_stop_typing', (data) => {
+        if (data.user_id === receiverId) {
+            document.getElementById('typing-indicator').textContent = '';
+        }
+    });
+
+    // ===== SEND MESSAGE =====
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const message = input.value.trim();
+        
+        if (message && receiverId) {
+            socket.emit('send_message', {
+                sender_id: currentUserId,
+                receiver_id: receiverId,
+                message: message
+            });
+            
+            input.value = '';
+            
+            if (isTyping) {
+                socket.emit('stop_typing', {
+                    sender_id: currentUserId,
+                    receiver_id: receiverId
+                });
+                isTyping = false;
+            }
+        }
+    }
+
+    // ===== EVENT LISTENERS =====
+    const sendButton = document.getElementById('user-click');
+    const messageInput = document.getElementById('messageInput');
+
+    if (sendButton) {
+        sendButton.addEventListener('click', sendMessage);
+    }
+
+    if (messageInput) {
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Typing indicator
+        messageInput.addEventListener('input', () => {
+            if (!isTyping && receiverId) {
+                socket.emit('typing', {
+                    sender_id: currentUserId,
+                    receiver_id: receiverId
+                });
+                isTyping = true;
+            }
+            
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                if (receiverId) {
+                    socket.emit('stop_typing', {
+                        sender_id: currentUserId,
+                        receiver_id: receiverId
+                    });
+                    isTyping = false;
+                }
+            }, 1000);
+        });
+    }
+
+    // ===== HELPER FUNCTIONS =====
+    function addMessage(data) {
+        const messagesContainer = document.getElementById('messages');
+        if (!messagesContainer) return;
+        
+        let chatBox = document.getElementById('chat-box');
+        if (!chatBox) {
+            messagesContainer.innerHTML = '';
+            chatBox = document.createElement('div');
+            chatBox.id = 'chat-box';
+            messagesContainer.appendChild(chatBox);
+        }
+        
+        const messageDiv = document.createElement('div');
+        const isSent = data.sender_id === currentUserId;
+        messageDiv.className = isSent ? 'msg sent' : 'msg received';
+        
+        const time = new Date().toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true 
+        });
+        
+        messageDiv.innerHTML = `
+            <p>${escapeHtml(data.message)}</p>
+            <p class="time">${time}</p>
+        `;
+        
+        chatBox.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // ===== AUTO-SCROLL ON LOAD =====
+    window.addEventListener('load', () => {
+        const messagesContainer = document.getElementById('messages');
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Check receiver status on page load
+        if (receiverId) {
+            checkUserStatus(receiverId);
+        }
+    });
+
+    // ===== PERIODIC STATUS CHECK (Optional) =====
+    // Check online users every 2 minutes
+    setInterval(() => {
+        requestOnlineUsers();
+    }, 120000); // 2 minutes
+</script>
+
+<style>
+    /* Online status indicator styles */
+    .online-status {
+        width: 12px;
+        height: 12px;
+        background: #31a24c;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        border: 2px solid white;
+        display: none; /* Hidden by default, shown when online */
+    }
+
+    .user-status-text {
+        font-size: 13px;
+        color: #999;
+        transition: color 0.3s ease;
+    }
+
+    /* Pulsing animation for online status */
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(49, 162, 76, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 6px rgba(49, 162, 76, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(49, 162, 76, 0);
+        }
+    }
+
+    .online-status {
+        animation: pulse 2s infinite;
+    }
+
+    /* Typing indicator */
+    #typing-indicator {
+        padding: 10px 20px;
+        color: #999;
+        font-style: italic;
+        min-height: 30px;
+        font-size: 14px;
+    }
+</style>
 {% endblock %}

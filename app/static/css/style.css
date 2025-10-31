@@ -429,6 +429,10 @@ form {
 .user-message-container{
     width: 100%;
     height: 81%;
+    overflow-y: auto;
+    &::-webkit-scrollbar{
+        width: 0;
+    }
 }
 .user-message-send-container{
     width: 100%;
@@ -470,6 +474,7 @@ form {
     width: 25px;
 }
 
+
 .user-message-send-input-container input,
 .user-message-send-input-container p{
     width: 50rem;
@@ -484,6 +489,53 @@ form {
     color: #fff;
 }
 
+.user-message-send-input-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .send{
     background-color: #1c1c1c;
 }
+
+.user-message-container .message{
+    padding: 2rem 6rem;
+    color: #fff;
+    width: 100%;
+}
+
+.user-message-container .message .msg {
+    border-radius: 7px;
+    max-width: 30rem;
+    min-width: 4rem;
+    padding: 5px 5px 0px 5px;
+    margin: 1rem 0;
+    width: fit-content;
+    font-size: 16px;
+    /* padding-right: 2rem; */
+    position: relative;
+}
+
+.user-message-container .message .msg .time{
+    font-size: 10px;
+    text-align: right;
+    color: #b7b7b7;
+    transform: translateY(-3px);
+}
+
+.user-message-container .message .msg :first-child{
+    padding-right: 3.5rem;
+}
+
+.user-message-container .message .sent{
+    background-color: #252525;
+    margin-left: auto;
+}
+
+.user-message-container .message .received{
+    background-color: #303030;
+}
+
+
+ 
