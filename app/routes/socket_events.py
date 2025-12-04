@@ -1,6 +1,6 @@
-# ===== app/socket_events.py (Enhanced with Online/Offline Detection) =====
+# ===== app/socket_events.py =====
 from flask_socketio import emit, join_room, leave_room
-from flask import session, request
+from flask import request
 from app import mongo
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -51,7 +51,7 @@ def register_socket_events(socketio):
                             'last_seen': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         }, broadcast=True)
                         
-                        print(f"User {user_info['username']} is now OFFLINE")
+                        print(f"User {user_info['username']} ({user_id}) is now OFFLINE")
                     except Exception as e:
                         print(f"Error updating user status: {e}")
             
@@ -65,6 +65,10 @@ def register_socket_events(socketio):
         """Handle user coming online"""
         user_id = data.get('user_id')
         username = data.get('username')
+        
+        if not user_id or not username:
+            print("Missing user_id or username in user_online event")
+            return
         
         # Store user info with this socket
         active_users[request.sid] = {
@@ -113,8 +117,9 @@ def register_socket_events(socketio):
             
             emit('online_users_list', {'users': online_users_data})
             
-            print(f"User {username} is now ONLINE (Socket: {request.sid})")
+            print(f"User {username} ({user_id}) is now ONLINE (Socket: {request.sid})")
             print(f"Active sockets for user {user_id}: {len(user_sockets.get(user_id, []))}")
+            print(f"Total online users: {len(user_sockets)}")
             
         except Exception as e:
             print(f"Error updating user status: {e}")
@@ -144,14 +149,17 @@ def register_socket_events(socketio):
         is_online = user_id in user_sockets and len(user_sockets[user_id]) > 0
         
         # Get last_seen from database
-        user_doc = mongo.db.users.find_one({'_id': ObjectId(user_id)})
-        last_seen = user_doc.get('last_seen') if user_doc else None
-        
-        emit('user_status_response', {
-            'user_id': user_id,
-            'online': is_online,
-            'last_seen': last_seen.strftime('%Y-%m-%d %H:%M:%S') if last_seen else None
-        })
+        try:
+            user_doc = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+            last_seen = user_doc.get('last_seen') if user_doc else None
+            
+            emit('user_status_response', {
+                'user_id': user_id,
+                'online': is_online,
+                'last_seen': last_seen.strftime('%Y-%m-%d %H:%M:%S') if last_seen else None
+            })
+        except Exception as e:
+            print(f"Error checking user status: {e}")
     
     @socketio.on('get_online_users')
     def handle_get_online_users():
@@ -160,14 +168,17 @@ def register_socket_events(socketio):
         online_users_data = []
         
         for uid in online_user_ids:
-            user_doc = mongo.db.users.find_one({'_id': ObjectId(uid)})
-            if user_doc:
-                online_users_data.append({
-                    'user_id': uid,
-                    'username': user_doc.get('name', 'Unknown'),
-                    'email': user_doc.get('email', ''),
-                    'status': 'online'
-                })
+            try:
+                user_doc = mongo.db.users.find_one({'_id': ObjectId(uid)})
+                if user_doc:
+                    online_users_data.append({
+                        'user_id': uid,
+                        'username': user_doc.get('name', 'Unknown'),
+                        'email': user_doc.get('email', ''),
+                        'status': 'online'
+                    })
+            except Exception as e:
+                print(f"Error getting user {uid}: {e}")
         
         emit('online_users_list', {'users': online_users_data})
     
@@ -192,13 +203,17 @@ def register_socket_events(socketio):
         
         # Send receiver's current status
         receiver_online = receiver_id in user_sockets and len(user_sockets[receiver_id]) > 0
-        receiver_doc = mongo.db.users.find_one({'_id': ObjectId(receiver_id)})
         
-        emit('joined_room', {
-            'room': room,
-            'receiver_online': receiver_online,
-            'receiver_last_seen': receiver_doc.get('last_seen').strftime('%Y-%m-%d %H:%M:%S') if receiver_doc and receiver_doc.get('last_seen') else None
-        })
+        try:
+            receiver_doc = mongo.db.users.find_one({'_id': ObjectId(receiver_id)})
+            
+            emit('joined_room', {
+                'room': room,
+                'receiver_online': receiver_online,
+                'receiver_last_seen': receiver_doc.get('last_seen').strftime('%Y-%m-%d %H:%M:%S') if receiver_doc and receiver_doc.get('last_seen') else None
+            })
+        except Exception as e:
+            print(f"Error getting receiver status: {e}")
     
     @socketio.on('leave_chat')
     def handle_leave_chat(data):
@@ -265,17 +280,7 @@ def register_socket_events(socketio):
             # Emit to room (both sender and receiver if in room)
             emit('receive_message', message_response, room=room)
             
-            # Check if receiver is online
-            receiver_online = receiver_id in user_sockets and len(user_sockets[receiver_id]) > 0
-            
-            # Send notification if receiver is online but not in this chat room
-            if receiver_online:
-                emit('new_message_notification', {
-                    'sender_id': sender_id,
-                    'sender_name': sender.get('name', 'Unknown'),
-                    'message': message_text.strip(),
-                    'conversation_id': conversation_id
-                }, room=receiver_id)
+            print(f"Message sent from {sender_id} to {receiver_id}")
             
         except Exception as e:
             print(f"Error sending message: {e}")

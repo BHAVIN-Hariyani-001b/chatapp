@@ -15,6 +15,7 @@ body {
     min-height: 100vh;
     width: 100%;
     background-color: #212121;
+    overflow-y: hidden;
 }
 
 /* login and register */
@@ -235,11 +236,11 @@ form {
     align-items: center;
     justify-content: center;
     padding: 0 0 10px 0;
-    box-shadow:0 2px 2px rgb(0, 0, 0, 0.251);
+    box-shadow: 0 2px 2px rgb(0, 0, 0, 0.251);
 }
 
 .user-chat-search {
-    width: 25rem;
+    width: 90%;
     height: 3rem;
     display: flex;
     align-items: center;
@@ -263,7 +264,7 @@ form {
 }
 
 .user-chat-search input {
-    width: 20rem;
+    width: 20vw;
     line-height: 1rem;
     padding: 10px 15px;
     border-radius: 20px;
@@ -293,11 +294,11 @@ form {
     width: 20px;
 }
 
-.search-clear-icon svg{
+.search-clear-icon svg {
     display: none;
 }
 
-.user-chat-list-container{
+.user-chat-list-container {
     position: relative;
 }
 
@@ -305,7 +306,7 @@ form {
     /* display: flex; */
     /* align-items: center; */
     padding: 1.5rem 10px;
-    height: 73vh;
+    height: 74vh;
     overflow-y: auto;
     /* background-color: red; */
     /* justify-content: center; */
@@ -316,12 +317,13 @@ form {
     width: 0;
 }
 
-.user-search-list{
+.user-search-list {
     width: 100%;
-    height: 73vh;
+    height: 100%;
     padding: 1.5rem 10px;
     display: none;
     overflow-y: auto;
+
     &::-webkit-scrollbar {
         width: 0;
     }
@@ -329,34 +331,35 @@ form {
 
 .user-list .user,
 .user-profile-show .user,
-.user-search-list .user ,
-.user-message-header .user{
+.user-search-list .user,
+.user-message-header .user {
     display: flex;
     align-items: center;
     padding: 10px 10px 10px 1rem;
     width: 100%;
     text-decoration: none;
 }
+
 .user-list .user:hover,
 .user-profile-show .user:hover,
-.user-search-list .user:hover{
+.user-search-list .user:hover {
     background-color: #1c1c1c;
     border-radius: 10px;
     cursor: pointer;
 }
 
-.user-message-header .user{
+.user-message-header .user {
     background-color: #1c1c1c;
 }
 
-.user-message-header .user:hover{
+.user-message-header .user:hover {
     background-color: #212121;
 }
 
 .user-list .user .user-img,
 .user-profile-show .user .user-img,
-.user-search-list .user .user-img ,
-.user-message-header .user .user-img{
+.user-search-list .user .user-img,
+.user-message-header .user .user-img {
     background-color: #252525;
     height: 50px;
     border-radius: 50%;
@@ -365,15 +368,15 @@ form {
     justify-content: left;
 }
 
-.user-list .user .user-img svg ,
+.user-list .user .user-img svg,
 .user-profile-show .user .user-img svg,
 .user-search-list .user .user-img svg,
-.user-message-header .user .user-img{
+.user-message-header .user .user-img {
     width: 50px;
     height: 50px;
 }
 
-.user-search-list .user .follow .Follow{
+.user-search-list .user .follow .Follow {
     background-color: #708DFF;
 }
 
@@ -382,7 +385,7 @@ form {
     color: #fff;
 }
 
-.user-profile-show{
+.user-profile-show {
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -390,18 +393,18 @@ form {
     border-top: 1px solid #383b3b;
 }
 
-.user-profile-label{
+.user-profile-label {
     display: flex;
     align-items: center;
 }
 
-.user-chat-logout{
+.user-chat-logout {
     cursor: pointer;
     position: absolute;
     right: 2rem;
 }
 
-.user-chat-logout button{
+.user-chat-logout button {
     background: none;
     border: none;
     outline: none;
@@ -413,36 +416,39 @@ form {
     border-radius: 1.5rem;
 }
 
-.user-chat-logout button:hover{
+.user-chat-logout button:hover {
     background-color: #525252;
 }
 
-.no-results{
+.no-results {
     text-align: center;
     color: #fff;
 }
 
-.user-message-header{
+.user-message-header {
     width: 100%;
     height: 9%;
 }
-.user-message-container{
+
+.user-message-container {
     width: 100%;
     height: 81%;
     overflow-y: auto;
-    &::-webkit-scrollbar{
+
+    &::-webkit-scrollbar {
         width: 0;
     }
 }
-.user-message-send-container{
+
+.user-message-send-container {
     width: 100%;
-    height:10%;
+    height: 10%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.user-message-send-container .user-message{
+.user-message-send-container .user-message {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -454,7 +460,7 @@ form {
 
 .user-attach,
 .user-select-emoji,
-.user-send-message{
+.user-send-message {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -463,21 +469,22 @@ form {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
         background-color: #252525;
     }
 }
 
 .user-attach svg,
 .user-select-emoji svg,
-.user-send-message svg{
+.user-send-message svg {
     width: 25px;
 }
 
 
 .user-message-send-input-container input,
-.user-message-send-input-container p{
-    width: 50rem;
+.user-message-send-input-container p {
+    width: 50vw;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -489,17 +496,17 @@ form {
     color: #fff;
 }
 
-.user-message-send-input-container{
+.user-message-send-input-container {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.send{
+.send {
     background-color: #1c1c1c;
 }
 
-.user-message-container .message{
+.user-message-container .message {
     padding: 2rem 6rem;
     color: #fff;
     width: 100%;
@@ -517,25 +524,72 @@ form {
     position: relative;
 }
 
-.user-message-container .message .msg .time{
+.user-message-container .message .msg .time {
     font-size: 10px;
     text-align: right;
     color: #b7b7b7;
     transform: translateY(-3px);
 }
 
-.user-message-container .message .msg :first-child{
+.user-message-container .message .msg :first-child {
     padding-right: 3.5rem;
 }
 
-.user-message-container .message .sent{
+.user-message-container .message .sent {
     background-color: #252525;
     margin-left: auto;
 }
 
-.user-message-container .message .received{
+.user-message-container .message .received {
     background-color: #303030;
 }
 
+/* Online status indicator styles */
+.online-status {
+    width: 12px;
+    height: 12px;
+    background: #31a24c;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    border: 2px solid white;
+    display: none;
+    /* Hidden by default, shown when online */
+}
 
- 
+.user-status-text {
+    font-size: 13px;
+    color: #999;
+    transition: color 0.3s ease;
+}
+
+/* Pulsing animation for online status */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(49, 162, 76, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(49, 162, 76, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(49, 162, 76, 0);
+    }
+}
+
+.online-status {
+    animation: pulse 2s infinite;
+}
+
+/* Typing indicator */
+#typing-indicator {
+    padding: 10px 20px;
+    color: #999;
+    font-style: italic;
+    min-height: 30px;
+    font-size: 14px;
+}
+
+

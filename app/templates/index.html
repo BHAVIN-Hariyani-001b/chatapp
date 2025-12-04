@@ -35,7 +35,7 @@
                     <div class="user-list">
                         {% for user in user_list %}
                             {% if user._id in users_followed.following  %}
-                                <a href="{{ url_for('chat.chat',user_id=user._id) }}" class="user" data-user-id="{{ user._id }}">
+                                <a href="{{ url_for('chat.chat',user_id=user._id) }}" class="user" id="{{user._id}}" data-user-id="{{ user._id }}">
                                     <div class="user-img">
                                         <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
                                         <span class="online-status" data-user-id="{{ user._id }}" style="display: none;"></span>
@@ -126,373 +126,326 @@
 
     <script src="{{ url_for('static',filename='js/search.js')}}"></script>
     <!-- Add this JavaScript to your index.html template -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
-<script>
-    const socket = io();
-    const currentUserId = "{{ users_followed._id }}";
-    const currentUsername = "{{ session['name'] }}";
-    const receiverId = "{{ user._id if user else '' }}";
-    const receiverName = "{{ user.name if user else '' }}";
-    
-    let typingTimer;
-    let isTyping = false;
-    let heartbeatInterval;
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const currentUserId = "{{ users_followed._id }}";
+        const currentUsername = "{{ session['name'] }}";
+        const receiverId = "{{ user._id if user else '' }}";
+        const receiverName = "{{ user.name if user else '' }}";
+        
+        let typingTimer;
+        let isTyping = false;
+        let heartbeatInterval;
 
-    // Connect to server
-    socket.on('connect', () => {
-        console.log('Connected to server');
-        
-        // Announce user is online
-        socket.emit('user_online', {
-            user_id: currentUserId,
-            username: currentUsername
-        });
-        
-        // Join chat room if receiver exists
-        if (receiverId) {
-            socket.emit('join_chat', {
+        // Connect to server
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            
+            // Announce user is online
+            socket.emit('user_online', {
                 user_id: currentUserId,
-                receiver_id: receiverId
+                username: currentUsername
             });
+            
+            // Join chat room if receiver exists
+            if (receiverId) {
+                socket.emit('join_chat', {
+                    user_id: currentUserId,
+                    receiver_id: receiverId
+                });
+            }
+            
+            // Start heartbeat to maintain online status
+            startHeartbeat();
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            stopHeartbeat();
+        });
+
+        // ===== HEARTBEAT TO MAINTAIN ONLINE STATUS =====
+        function startHeartbeat() {
+            // Send heartbeat every 30 seconds
+            heartbeatInterval = setInterval(() => {
+                socket.emit('heartbeat', {
+                    user_id: currentUserId
+                });
+            }, 30000); // 30 seconds
         }
-        
-        // Start heartbeat to maintain online status
-        startHeartbeat();
-    });
 
-    socket.on('disconnect', () => {
-        console.log('Disconnected from server');
-        stopHeartbeat();
-    });
+        function stopHeartbeat() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+            }
+        }
 
-    // ===== HEARTBEAT TO MAINTAIN ONLINE STATUS =====
-    function startHeartbeat() {
-        // Send heartbeat every 30 seconds
-        heartbeatInterval = setInterval(() => {
-            socket.emit('heartbeat', {
-                user_id: currentUserId
+        // ===== HANDLE USER STATUS CHANGES =====
+        socket.on('user_status_change', (data) => {
+            console.log('User status change:', data);
+            
+            updateUserStatus(data.user_id, data.status, data.last_seen);
+        });
+
+        // Receive list of online users when connecting
+        socket.on('online_users_list', (data) => {
+            console.log('Online users:', data.users);
+            
+            data.users.forEach(user => {
+                updateUserStatus(user.user_id, 'online');
             });
-        }, 30000); // 30 seconds
-    }
-
-    function stopHeartbeat() {
-        if (heartbeatInterval) {
-            clearInterval(heartbeatInterval);
-        }
-    }
-
-    // ===== HANDLE USER STATUS CHANGES =====
-    socket.on('user_status_change', (data) => {
-        console.log('User status change:', data);
-        
-        updateUserStatus(data.user_id, data.status, data.last_seen);
-    });
-
-    // Receive list of online users when connecting
-    socket.on('online_users_list', (data) => {
-        console.log('Online users:', data.users);
-        
-        data.users.forEach(user => {
-            updateUserStatus(user.user_id, 'online');
         });
-    });
 
-    // Handle joined room response
-    socket.on('joined_room', (data) => {
-        console.log('Joined room:', data);
-        
-        // Update receiver status in chat header
-        if (receiverId) {
-            updateChatHeaderStatus(data.receiver_online, data.receiver_last_seen);
-        }
-    });
-
-    // ===== UPDATE UI FUNCTIONS =====
-    function updateUserStatus(userId, status, lastSeen = null) {
-        // Update online indicators in user list sidebar
-        const onlineIndicators = document.querySelectorAll(`[data-user-id="${userId}"].online-status`);
-        onlineIndicators.forEach(indicator => {
-            indicator.style.display = status === 'online' ? 'block' : 'none';
+        // Handle joined room response
+        socket.on('joined_room', (data) => {
+            console.log('Joined room:', data);
+            
+            // Update receiver status in chat header
+            if (receiverId) {
+                updateChatHeaderStatus(data.receiver_online, data.receiver_last_seen);
+            }
         });
-        
-        // Update status in chat header if this is the current chat user
-        if (userId === receiverId) {
-            updateChatHeaderStatus(status === 'online', lastSeen);
-        }
-    }
 
-    function updateChatHeaderStatus(isOnline, lastSeen = null) {
-        const statusText = document.querySelector('.user-status-text');
-        if (!statusText) return;
-        
-        if (isOnline) {
-            statusText.textContent = 'Online';
-            statusText.style.color = '#31a24c';
-            statusText.style.fontWeight = '600';
-        } else {
-            if (lastSeen) {
-                const lastSeenDate = new Date(lastSeen);
-                const now = new Date();
-                const diffMinutes = Math.floor((now - lastSeenDate) / 60000);
-                
-                let lastSeenText;
-                if (diffMinutes < 1) {
-                    lastSeenText = 'Just now';
-                } else if (diffMinutes < 60) {
-                    lastSeenText = `${diffMinutes} min ago`;
-                } else if (diffMinutes < 1440) {
-                    const hours = Math.floor(diffMinutes / 60);
-                    lastSeenText = `${hours} hour${hours > 1 ? 's' : ''} ago`;
-                } else {
-                    const days = Math.floor(diffMinutes / 1440);
-                    lastSeenText = `${days} day${days > 1 ? 's' : ''} ago`;
-                }
-                
-                statusText.textContent = `Last seen ${lastSeenText}`;
+        // ===== UPDATE UI FUNCTIONS =====
+        function updateUserStatus(userId, status, lastSeen = null) {
+            // Update online indicators in user list sidebar
+            const onlineIndicators = document.querySelectorAll(`[data-user-id="${userId}"].online-status`);
+            onlineIndicators.forEach(indicator => {
+                indicator.style.display = status === 'online' ? 'block' : 'none';
+            });
+            
+            // Update status in chat header if this is the current chat user
+            if (userId === receiverId) {
+                updateChatHeaderStatus(status === 'online', lastSeen);
+            }
+        }
+
+        function updateChatHeaderStatus(isOnline, lastSeen = null) {
+            const statusText = document.querySelector('.user-status-text');
+            if (!statusText) return;
+            
+            if (isOnline) {
+                statusText.textContent = 'Online';
+                statusText.style.color = '#31a24c';
+                statusText.style.fontWeight = '600';
             } else {
-                statusText.textContent = 'Offline';
-            }
-            statusText.style.color = '#999';
-            statusText.style.fontWeight = 'normal';
-        }
-    }
-
-    // ===== CHECK SPECIFIC USER STATUS =====
-    function checkUserStatus(userId) {
-        socket.emit('check_user_status', { user_id: userId });
-    }
-
-    socket.on('user_status_response', (data) => {
-        console.log('User status response:', data);
-        updateUserStatus(data.user_id, data.online ? 'online' : 'offline', data.last_seen);
-    });
-
-    // ===== REQUEST ALL ONLINE USERS =====
-    function requestOnlineUsers() {
-        socket.emit('get_online_users');
-    }
-
-    // ===== BROWSER VISIBILITY API =====
-    // Detect when user switches tabs or minimizes browser
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            console.log('User left the tab');
-            // Optional: You can pause heartbeat or reduce frequency
-        } else {
-            console.log('User returned to the tab');
-            // Resume normal heartbeat
-            socket.emit('heartbeat', { user_id: currentUserId });
-        }
-    });
-
-    // ===== HANDLE PAGE UNLOAD =====
-    window.addEventListener('beforeunload', () => {
-        // Leave chat room when navigating away
-        if (receiverId) {
-            socket.emit('leave_chat', {
-                user_id: currentUserId,
-                receiver_id: receiverId
-            });
-        }
-        
-        // Socket.IO will handle disconnect automatically
-        stopHeartbeat();
-    });
-
-    // ===== HANDLE RECEIVING MESSAGES =====
-    socket.on('receive_message', (data) => {
-        console.log('Message received:', data);
-        if (data.sender_id === receiverId || data.sender_id === currentUserId) {
-            addMessage(data);
-            
-            // Mark as read if chat is open
-            if (data.sender_id === receiverId) {
-                socket.emit('mark_as_read', {
-                    sender_id: receiverId,
-                    receiver_id: currentUserId
-                });
+                if (lastSeen) {
+                    const lastSeenDate = new Date(lastSeen);
+                    const now = new Date();
+                    const diffMinutes = Math.floor((now - lastSeenDate) / 60000);
+                    
+                    let lastSeenText;
+                    if (diffMinutes < 1) {
+                        lastSeenText = 'Just now';
+                    } else if (diffMinutes < 60) {
+                        lastSeenText = `${diffMinutes} min ago`;
+                    } else if (diffMinutes < 1440) {
+                        const hours = Math.floor(diffMinutes / 60);
+                        lastSeenText = `${hours} hour${hours > 1 ? 's' : ''} ago`;
+                    } else {
+                        const days = Math.floor(diffMinutes / 1440);
+                        lastSeenText = `${days} day${days > 1 ? 's' : ''} ago`;
+                    }
+                    
+                    statusText.textContent = `Last seen ${lastSeenText}`;
+                } else {
+                    statusText.textContent = 'Offline';
+                }
+                statusText.style.color = '#999';
+                statusText.style.fontWeight = 'normal';
             }
         }
-    });
 
-    // ===== HANDLE TYPING INDICATORS =====
-    socket.on('user_typing', (data) => {
-        if (data.user_id === receiverId) {
-            document.getElementById('typing-indicator').textContent = `${receiverName} is typing...`;
+        // ===== CHECK SPECIFIC USER STATUS =====
+        function checkUserStatus(userId) {
+            socket.emit('check_user_status', { user_id: userId });
         }
-    });
 
-    socket.on('user_stop_typing', (data) => {
-        if (data.user_id === receiverId) {
-            document.getElementById('typing-indicator').textContent = '';
+        socket.on('user_status_response', (data) => {
+            console.log('User status response:', data);
+            updateUserStatus(data.user_id, data.online ? 'online' : 'offline', data.last_seen);
+        });
+
+        // ===== REQUEST ALL ONLINE USERS =====
+        function requestOnlineUsers() {
+            socket.emit('get_online_users');
         }
-    });
 
-    // ===== SEND MESSAGE =====
-    function sendMessage() {
-        const input = document.getElementById('messageInput');
-        const message = input.value.trim();
-        
-        if (message && receiverId) {
-            socket.emit('send_message', {
-                sender_id: currentUserId,
-                receiver_id: receiverId,
-                message: message
-            });
-            
-            input.value = '';
-            
-            if (isTyping) {
-                socket.emit('stop_typing', {
-                    sender_id: currentUserId,
-                    receiver_id: receiverId
-                });
-                isTyping = false;
-            }
-        }
-    }
-
-    // ===== EVENT LISTENERS =====
-    const sendButton = document.getElementById('user-click');
-    const messageInput = document.getElementById('messageInput');
-
-    if (sendButton) {
-        sendButton.addEventListener('click', sendMessage);
-    }
-
-    if (messageInput) {
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
+        // ===== BROWSER VISIBILITY API =====
+        // Detect when user switches tabs or minimizes browser
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('User left the tab');
+                // Optional: You can pause heartbeat or reduce frequency
+            } else {
+                console.log('User returned to the tab');
+                // Resume normal heartbeat
+                socket.emit('heartbeat', { user_id: currentUserId });
             }
         });
 
-        // Typing indicator
-        messageInput.addEventListener('input', () => {
-            if (!isTyping && receiverId) {
-                socket.emit('typing', {
-                    sender_id: currentUserId,
+        // ===== HANDLE PAGE UNLOAD =====
+        window.addEventListener('beforeunload', () => {
+            // Leave chat room when navigating away
+            if (receiverId) {
+                socket.emit('leave_chat', {
+                    user_id: currentUserId,
                     receiver_id: receiverId
                 });
-                isTyping = true;
             }
             
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => {
-                if (receiverId) {
+            // Socket.IO will handle disconnect automatically
+            stopHeartbeat();
+        });
+
+        // ===== HANDLE RECEIVING MESSAGES =====
+        socket.on('receive_message', (data) => {
+            console.log('Message received:', data);
+            if (data.sender_id === receiverId || data.sender_id === currentUserId) {
+                addMessage(data);
+                
+                // Mark as read if chat is open
+                if (data.sender_id === receiverId) {
+                    socket.emit('mark_as_read', {
+                        sender_id: receiverId,
+                        receiver_id: currentUserId
+                    });
+                }
+            }
+        });
+
+        // ===== HANDLE TYPING INDICATORS =====
+        socket.on('user_typing', (data) => {
+            if (data.user_id === receiverId) {
+                document.getElementById('typing-indicator').textContent = `${receiverName} is typing...`;
+            }
+        });
+
+        socket.on('user_stop_typing', (data) => {
+            if (data.user_id === receiverId) {
+                document.getElementById('typing-indicator').textContent = '';
+            }
+        });
+
+        // ===== SEND MESSAGE =====
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message && receiverId) {
+                socket.emit('send_message', {
+                    sender_id: currentUserId,
+                    receiver_id: receiverId,
+                    message: message
+                });
+                
+                input.value = '';
+                
+                if (isTyping) {
                     socket.emit('stop_typing', {
                         sender_id: currentUserId,
                         receiver_id: receiverId
                     });
                     isTyping = false;
                 }
-            }, 1000);
-        });
-    }
-
-    // ===== HELPER FUNCTIONS =====
-    function addMessage(data) {
-        const messagesContainer = document.getElementById('messages');
-        if (!messagesContainer) return;
-        
-        let chatBox = document.getElementById('chat-box');
-        if (!chatBox) {
-            messagesContainer.innerHTML = '';
-            chatBox = document.createElement('div');
-            chatBox.id = 'chat-box';
-            messagesContainer.appendChild(chatBox);
+            }
         }
-        
-        const messageDiv = document.createElement('div');
-        const isSent = data.sender_id === currentUserId;
-        messageDiv.className = isSent ? 'msg sent' : 'msg received';
-        
-        const time = new Date().toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: true 
-        });
-        
-        messageDiv.innerHTML = `
-            <p>${escapeHtml(data.message)}</p>
-            <p class="time">${time}</p>
-        `;
-        
-        chatBox.appendChild(messageDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+        // ===== EVENT LISTENERS =====
+        const sendButton = document.getElementById('user-click');
+        const messageInput = document.getElementById('messageInput');
 
-    // ===== AUTO-SCROLL ON LOAD =====
-    window.addEventListener('load', () => {
-        const messagesContainer = document.getElementById('messages');
-        if (messagesContainer) {
+        if (sendButton) {
+            sendButton.addEventListener('click', sendMessage);
+        }
+
+        if (messageInput) {
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Typing indicator
+            messageInput.addEventListener('input', () => {
+                if (!isTyping && receiverId) {
+                    socket.emit('typing', {
+                        sender_id: currentUserId,
+                        receiver_id: receiverId
+                    });
+                    isTyping = true;
+                }
+                
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    if (receiverId) {
+                        socket.emit('stop_typing', {
+                            sender_id: currentUserId,
+                            receiver_id: receiverId
+                        });
+                        isTyping = false;
+                    }
+                }, 1000);
+            });
+        }
+
+        // ===== HELPER FUNCTIONS =====
+        function addMessage(data) {
+            const messagesContainer = document.getElementById('messages');
+            if (!messagesContainer) return;
+            
+            let chatBox = document.getElementById('chat-box');
+            if (!chatBox) {
+                messagesContainer.innerHTML = '';
+                chatBox = document.createElement('div');
+                chatBox.id = 'chat-box';
+                messagesContainer.appendChild(chatBox);
+            }
+            
+            const messageDiv = document.createElement('div');
+            const isSent = data.sender_id === currentUserId;
+            messageDiv.className = isSent ? 'msg sent' : 'msg received';
+            
+            const time = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            
+            messageDiv.innerHTML = `
+                <p>${escapeHtml(data.message)}</p>
+                <p class="time">${time}</p>
+            `;
+            
+            chatBox.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
-        
-        // Check receiver status on page load
-        if (receiverId) {
-            checkUserStatus(receiverId);
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-    });
 
-    // ===== PERIODIC STATUS CHECK (Optional) =====
-    // Check online users every 2 minutes
-    setInterval(() => {
-        requestOnlineUsers();
-    }, 120000); // 2 minutes
-</script>
+        // ===== AUTO-SCROLL ON LOAD =====
+        window.addEventListener('load', () => {
+            const messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            // Check receiver status on page load
+            if (receiverId) {
+                checkUserStatus(receiverId);
+            }
+        });
 
-<style>
-    /* Online status indicator styles */
-    .online-status {
-        width: 12px;
-        height: 12px;
-        background: #31a24c;
-        border-radius: 50%;
-        position: absolute;
-        bottom: 2px;
-        right: 2px;
-        border: 2px solid white;
-        display: none; /* Hidden by default, shown when online */
-    }
-
-    .user-status-text {
-        font-size: 13px;
-        color: #999;
-        transition: color 0.3s ease;
-    }
-
-    /* Pulsing animation for online status */
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(49, 162, 76, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 6px rgba(49, 162, 76, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(49, 162, 76, 0);
-        }
-    }
-
-    .online-status {
-        animation: pulse 2s infinite;
-    }
-
-    /* Typing indicator */
-    #typing-indicator {
-        padding: 10px 20px;
-        color: #999;
-        font-style: italic;
-        min-height: 30px;
-        font-size: 14px;
-    }
-</style>
+        // ===== PERIODIC STATUS CHECK (Optional) =====
+        // Check online users every 2 minutes
+        setInterval(() => {
+            requestOnlineUsers();
+        }, 120000); // 2 minutes
+    </script>
 {% endblock %}

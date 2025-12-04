@@ -16,7 +16,6 @@ def insert_user(db, name, email, password):
         'name': name,
         'email': email,
         'password': generate_password_hash(password),  # In a real application, ensure to hash the password before storing it
-        'status': 'offline',
         'followers':[],
         'following':['68f9b3f9b2baa9fbe8ad2bd9'],
         'about':'Hi, I am use venture',
@@ -36,7 +35,7 @@ def user_status_online(db,email):
     changeStatus = db.users
     changeStatus.update_one(
         {'email':email},
-        {"$set":{"status":'online'}}
+        {"$set":{"online":True}}
     )   
     
 def user_status_offline(db,email):
@@ -44,8 +43,8 @@ def user_status_offline(db,email):
     changeStatus = db.users
     changeStatus.update_one(
         {'email':email},
-        {"$set":{"status":'offline'}}
-    )
+        {"$set":{"online":False}}
+    )  
    
 @auth_bp.route("/")
 def dashboard():

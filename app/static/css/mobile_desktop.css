@@ -1,0 +1,17 @@
+@media (max-width:900px) {
+    .user-chat-container {
+        display: none;
+    }
+
+    .user-list-container {
+        width: 100%;
+    }
+
+    .user-chat-search input {
+        width: 70vw;
+    }
+
+    .user-profile-show {
+        display: none;
+    }
+}
