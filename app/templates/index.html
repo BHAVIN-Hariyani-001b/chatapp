@@ -13,8 +13,26 @@
                         <a href="/">
                             <img src="{{ url_for('static',filename='image/logo.png') }}" alt="">
                         </a>
-                        <div class="user-chat-header-icon">
+                        <button type="button" class="user-chat-header-icon">
                             <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <div class="logout-container">
+                            <div class="logout-item">
+                                <div class="profile pad">
+                                    <svg fill="none" height="24" viewBox="0 0 26 26" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12.5" cy="11.168" r="3.5" stroke="currentColor" stroke-linecap="round" stroke-width="1.6"></circle><circle cx="12.5" cy="13.5" r="10.5" stroke="currentColor" stroke-width="1.6"></circle><path d="M19.5 21.3236C19.0871 20.0832 18.1773 18.9872 16.9117 18.2054C15.646 17.4237 14.0953 17 12.5 17C10.9047 17 9.35398 17.4237 8.08835 18.2054C6.82271 18.9872 5.91289 20.0832 5.5 21.3236" stroke="currentColor" stroke-linecap="round" stroke-width="1.6"></path></svg>
+                                    <span>profile</span>
+                                </div>
+                                <div class="user-logout pad">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                    <form action="{{ url_for('auth.logout') }}" method="GET">
+                                        <button type="submit">Log out</button>
+                                    </form>
+                                </div>
+                                <div class="Mode-change de">
+                                    <button>🌤️</button>
+                                    <button>🌠</button>
+                                </div>
+                            </div>
                         </div>
                    </div>
                    <div class="user-chat-search-container">
@@ -23,7 +41,7 @@
                                 <svg viewBox="0 0 20 20" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>search-refreshed-thin</title><path fill-rule="evenodd" clip-rule="evenodd" d="M4.36653 4.3664C5.36341 3.36953 6.57714 2.87 8.00012 2.87C9.42309 2.87 10.6368 3.36953 11.6337 4.3664C12.6306 5.36329 13.1301 6.57724 13.1301 8.00062C13.1301 8.57523 13.0412 9.11883 12.8624 9.63057C12.6972 10.1038 12.4733 10.5419 12.1909 10.9444L16.5712 15.3247C16.7454 15.4989 16.8385 15.7046 16.8385 15.9375C16.8385 16.1704 16.7454 16.3761 16.5712 16.5503C16.396 16.7254 16.1866 16.8175 15.948 16.8175C15.7095 16.8175 15.5001 16.7254 15.3249 16.5503L10.9448 12.1906C10.5421 12.4731 10.104 12.697 9.63069 12.8623C9.11895 13.041 8.57535 13.13 8.00074 13.13C6.57736 13.13 5.36341 12.6305 4.36653 11.6336C3.36965 10.6367 2.87012 9.42297 2.87012 8C2.87012 6.57702 3.36965 5.36328 4.36653 4.3664ZM8.00012 4.63C7.06198 4.63 6.26877 4.95685 5.61287 5.61275C4.95698 6.26865 4.63012 7.06186 4.63012 8C4.63012 8.93813 4.95698 9.73134 5.61287 10.3872C6.26877 11.0431 7.06198 11.37 8.00012 11.37C8.93826 11.37 9.73146 11.0431 10.3874 10.3872C11.0433 9.73134 11.3701 8.93813 11.3701 8C11.3701 7.06186 11.0433 6.26865 10.3874 5.61275C9.73146 4.95685 8.93826 4.63 8.00012 4.63Z" fill="currentColor"></path></svg>
                             </div>
                             <div class="user-chat-search-input">   
-                                <input type="text" name="/search" id="search" class="search" placeholder="Search User...">
+                                <input type="text" name="/search" id="search" class="search" placeholder="Search User..." autocomplete="off" >
                             </div>
                             <button type="button" class="user-chat-search-icon search-clear-icon" id="clear-search">
                                 <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>ic-close</title><path d="M12 13.4L7.09999 18.3C6.91665 18.4834 6.68332 18.575 6.39999 18.575C6.11665 18.575 5.88332 18.4834 5.69999 18.3C5.51665 18.1167 5.42499 17.8834 5.42499 17.6C5.42499 17.3167 5.51665 17.0834 5.69999 16.9L10.6 12L5.69999 7.10005C5.51665 6.91672 5.42499 6.68338 5.42499 6.40005C5.42499 6.11672 5.51665 5.88338 5.69999 5.70005C5.88332 5.51672 6.11665 5.42505 6.39999 5.42505C6.68332 5.42505 6.91665 5.51672 7.09999 5.70005L12 10.6L16.9 5.70005C17.0833 5.51672 17.3167 5.42505 17.6 5.42505C17.8833 5.42505 18.1167 5.51672 18.3 5.70005C18.4833 5.88338 18.575 6.11672 18.575 6.40005C18.575 6.68338 18.4833 6.91672 18.3 7.10005L13.4 12L18.3 16.9C18.4833 17.0834 18.575 17.3167 18.575 17.6C18.575 17.8834 18.4833 18.1167 18.3 18.3C18.1167 18.4834 17.8833 18.575 17.6 18.575C17.3167 18.575 17.0833 18.4834 16.9 18.3L12 13.4Z" fill="currentColor"></path></svg>
@@ -35,7 +53,7 @@
                     <div class="user-list">
                         {% for user in user_list %}
                             {% if user._id in users_followed.following  %}
-                                <a href="{{ url_for('chat.chat',user_id=user._id) }}" class="user" id="{{user._id}}" data-user-id="{{ user._id }}">
+                                <div class="user" onclick="openChat('{{ user._id }}', '{{ user.name }}')">
                                     <div class="user-img">
                                         <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
                                         <span class="online-status" data-user-id="{{ user._id }}" style="display: none;"></span>
@@ -44,14 +62,14 @@
                                         <p>{{ user.name }}</p>
                                         <p>{{ user.about }}</p>
                                     </div>
-                                </a> 
+                                </div> 
                             {% endif %}
                         {% endfor %}
                     </div>
                     <div class="user-search-list">
                         <!-- user search list show to user is search and show list in this section  -->
                     </div>
-                    <div class="user-profile-show">
+                    <!-- <div class="user-profile-show">
                         <div class="user">
                             <div class="user-img">
                                 <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
@@ -68,37 +86,29 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             
             <div class="user-chat-container">
-                {% if user %}    
+                <div class="user-child-chat-container">
                     <div class="user-message-header">
                         <div class="user">
+                            <div class="Back-user-chat">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </div>
                             <div class="user-img">
                                 <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
                             </div>
                             <div class="user-name-label">
-                                <p>{{ user.name }}</p>
-                                <p class="user-status-text">{{ user.about }}</p>
+                                <p class="name"></p>
+                                <p class="user-status-text"></p>
                             </div>
                         </div> 
                     </div>
                     <div class="user-message-container">
                         <div class="message" id="messages">
-                           {% if messages %}
-                                <div id="chat-box">
-                                    {% for msg in messages %}
-                                        <div class="msg {% if msg.sender_id == users_followed._id %}sent{% else %}received{% endif %}">
-                                            <p>{{ msg.message }}</p>
-                                            <p class="time">{{ msg.timestamp.strftime('%H:%M %p') }}</p>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                <p style="text-align: center; color: #999; padding: 20px;">No messages yet. Start chatting!</p>
-                            {% endif %}
+                        
                         </div>
                         <div id="typing-indicator" style="padding: 10px 20px; color: #999; font-style: italic; min-height: 30px;"></div>
                     </div>
@@ -118,106 +128,526 @@
                             </div>
                        </div>
                     </div>
-                {% endif %}
+                </div>
             </div>
             
         </div>
     </div>
 
     <script src="{{ url_for('static',filename='js/search.js')}}"></script>
+    <script src="{{ url_for('static',filename='js/mobile_desktop.js')}}"></script>
+    <script src="{{ url_for('static',filename='js/message.js')}}"></script>
     <!-- Add this JavaScript to your index.html template -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
     <script>
+        // ============================================
+        // CHAT APPLICATION - FIXED TO MATCH SERVER
+        // ============================================
+
+        // Global Variables
         const socket = io();
         const currentUserId = "{{ users_followed._id }}";
         const currentUsername = "{{ session['name'] }}";
-        const receiverId = "{{ user._id if user else '' }}";
-        const receiverName = "{{ user.name if user else '' }}";
-        
-        let typingTimer;
-        let isTyping = false;
-        let heartbeatInterval;
 
-        // Connect to server
+        let receiverId = null;
+        let receiverName = null;
+        let currentRoom = null;
+        let isTyping = false;
+        let typingTimer = null;
+
+        console.log('🚀 Chat initialized with User ID:', currentUserId);
+
+        // ============================================
+        // 1. SOCKET CONNECTION
+        // ============================================
+
         socket.on('connect', () => {
-            console.log('Connected to server');
+            console.log('✅ Connected to socket server, SID:', socket.id);
             
             // Announce user is online
             socket.emit('user_online', {
                 user_id: currentUserId,
                 username: currentUsername
             });
+        });
+
+        socket.on('disconnect', () => {
+            console.log('❌ Disconnected from server');
+        });
+
+        socket.on('connection_response', (data) => {
+            console.log('📡 Server response:', data);
+        });
+
+        // ============================================
+        // 2. OPEN CHAT FUNCTION
+        // ============================================
+
+        async function openChat(otherId, otherName) {
+            console.log('📂 Opening chat with:', otherName, '(ID:', otherId + ')');
             
-            // Join chat room if receiver exists
-            if (receiverId) {
-                socket.emit('join_chat', {
+            // Leave previous room if exists
+            if (currentRoom && receiverId) {
+                console.log('👋 Leaving previous room:', currentRoom);
+                socket.emit('leave_chat', {
                     user_id: currentUserId,
                     receiver_id: receiverId
                 });
             }
             
-            // Start heartbeat to maintain online status
-            startHeartbeat();
-        });
-
-        socket.on('disconnect', () => {
-            console.log('Disconnected from server');
-            stopHeartbeat();
-        });
-
-        // ===== HEARTBEAT TO MAINTAIN ONLINE STATUS =====
-        function startHeartbeat() {
-            // Send heartbeat every 30 seconds
-            heartbeatInterval = setInterval(() => {
-                socket.emit('heartbeat', {
-                    user_id: currentUserId
-                });
-            }, 30000); // 30 seconds
-        }
-
-        function stopHeartbeat() {
-            if (heartbeatInterval) {
-                clearInterval(heartbeatInterval);
-            }
-        }
-
-        // ===== HANDLE USER STATUS CHANGES =====
-        socket.on('user_status_change', (data) => {
-            console.log('User status change:', data);
+            // Update global variables
+            receiverId = otherId;
+            receiverName = otherName;
+            currentRoom = [currentUserId, otherId].sort().join('_');
             
-            updateUserStatus(data.user_id, data.status, data.last_seen);
-        });
-
-        // Receive list of online users when connecting
-        socket.on('online_users_list', (data) => {
-            console.log('Online users:', data.users);
+            console.log('🏠 New room will be:', currentRoom);
             
-            data.users.forEach(user => {
-                updateUserStatus(user.user_id, 'online');
+            // Join new chat room
+            socket.emit('join_chat', {
+                user_id: currentUserId,
+                receiver_id: otherId
             });
-        });
+            
+            // Update UI header
+            updateChatHeader(otherName);
+            
+            // Load messages from server
+            await loadMessages(otherId);
+            
+            // Clear typing indicator
+            clearTypingIndicator();
+            
+            // Check user status
+            socket.emit('check_user_status', { user_id: otherId });
+            
+            console.log('✅ Chat opened successfully');
+        }
 
-        // Handle joined room response
+        // ============================================
+        // 3. SOCKET EVENT: JOINED ROOM
+        // ============================================
+
         socket.on('joined_room', (data) => {
-            console.log('Joined room:', data);
+            console.log('🏠 Joined room:', data.room);
+            console.log('📊 Receiver online:', data.receiver_online);
             
-            // Update receiver status in chat header
-            if (receiverId) {
-                updateChatHeaderStatus(data.receiver_online, data.receiver_last_seen);
+            // Update receiver status in header
+            updateChatHeaderStatus(data.receiver_online, data.receiver_last_seen);
+        });
+
+        // ============================================
+        // 4. LOAD MESSAGES FROM API
+        // ============================================
+
+        function dateTimeSet(utcDate){
+            if(utcDate){
+                const dateObj = new Date(utcDate);
+
+                return dateObj.toLocaleDateString("en-IN",{
+                    timeZone : "Asia/Kolkata",
+                    day : "2-digit",
+                    month : 'short',
+                    year : "numeric"
+                });
+            }
+            return "";
+        }
+
+        async function loadMessages(otherId) {
+            try {
+                console.log('📥 Loading messages for user:', otherId);
+                
+                const response = await fetch(`/api/chat/${otherId}`);
+                const data = await response.json();
+                
+                console.log('📨 Loaded', data.messages.length, 'messages');
+                
+                // Clear message container
+                const messagesContainer = document.querySelector('.user-message-container .message');
+                if (!messagesContainer) {
+                    console.error('❌ Messages container not found!');
+                    return;
+                }
+                
+                messagesContainer.innerHTML = '';
+                
+                // Create chat box
+                const chatBox = document.createElement('div');
+                chatBox.className = 'chat-box';
+                chatBox.id = 'active-chat-box';
+                
+                // // Add all messages
+                // data.messages.forEach(msg => {
+                //     appendMessageToBox(chatBox, msg);
+                // });
+                
+                // Track last displayed date
+                let lastDisplayedDate = null;
+
+                // Add all messages
+                data.messages.forEach(msg => {
+                    const messageDate = dateTimeSet(msg.timestamp);
+                    
+                    // Only show date header if it's different from the last one
+                    if (messageDate && messageDate !== lastDisplayedDate) {
+                        const dateDiv = createDateHeader(msg.timestamp);
+                        chatBox.appendChild(dateDiv);
+                        lastDisplayedDate = messageDate;
+                    }
+                    
+                    appendMessageToBox(chatBox, msg);
+                });
+
+                // Append to container
+                messagesContainer.appendChild(chatBox);
+                
+                // Scroll to bottom
+                scrollToBottom();
+                
+                console.log('✅ Messages loaded and displayed');
+                
+            } catch (error) {
+                console.error('❌ Error loading messages:', error);
+                alert('Failed to load messages. Please try again.');
+            }
+        }
+
+        // ============================================
+        // 5. APPEND MESSAGE TO CHAT BOX
+        // ============================================
+
+        function appendMessageToBox(chatBox, messageData) {
+            const msgDiv = document.createElement('div');
+            
+            // Determine sender ID (handle both formats)
+            let senderId;
+            if (messageData.sender_id) {
+                if (typeof messageData.sender_id === 'object' && messageData.sender_id.$oid) {
+                    senderId = messageData.sender_id.$oid;
+                } else {
+                    senderId = messageData.sender_id;
+                }
+            }
+            
+            const isSent = senderId === currentUserId;
+            msgDiv.className = isSent ? 'msg sent' : 'msg received';
+            
+            // Format timestamp
+            let timestamp = "";
+
+            if (messageData.timestamp) {
+                const date = new Date(messageData.timestamp);
+
+                if (!isNaN(date)) {
+                    timestamp = date.toLocaleString("en-IN", {
+                        timeZone: "Asia/Kolkata",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true
+                    });
+                } else {
+                    console.error("Invalid timestamp:", messageData.timestamp);
+                }
+            }
+
+            // date function call
+            // const dateFun = dateShow(messageData.timestamp);
+            
+            msgDiv.innerHTML = `
+                <p>${escapeHtml(messageData.message)}</p>
+                <p class="time">${timestamp}</p>
+            `;
+            
+            // if(dateFun){
+            //     chatBox.appendChild(dateFun);
+            // }
+            chatBox.appendChild(msgDiv);
+        }
+
+
+        function createDateHeader(utcTime = ""){
+            console.log(utcTime);
+            if(!utcTime){
+                return;
+            }
+
+            let today = new Date().toLocaleDateString("en-IN",{
+                timeZone : "Asia/Kolkata",
+                day : "numeric",
+                month : "short",
+                year : "numeric"
+            }); 
+
+            let div = document.createElement("div");
+            div.className = "date-header";
+
+            const dateOfMessage = dateTimeSet(utcTime);
+
+            if(dateOfMessage === today){
+                div.innerHTML = 'Today';
+            } else{
+                div.innerHTML = dateOfMessage;
+            }
+            return div;
+        }
+
+        function addMessageToChat(messageData) {
+            console.log('💬 Adding new message to chat:', messageData);
+            
+            // Get active chat box
+            let chatBox = document.getElementById('active-chat-box');
+            
+            // If no chat box exists, create one
+            if (!chatBox) {
+                console.log('📦 Creating new chat box');
+                const messagesContainer = document.querySelector('.user-message-container .message');
+                if (!messagesContainer) {
+                    console.error('❌ Messages container not found!');
+                    return;
+                }
+                
+                messagesContainer.innerHTML = '';
+                chatBox = document.createElement('div');
+                chatBox.className = 'chat-box';
+                chatBox.id = 'active-chat-box';
+                messagesContainer.appendChild(chatBox);
+            }
+
+
+
+            // Get the new message's date
+            const newMessageDate = dateTimeSet(messageData.timestamp);
+            
+            // Get current "Today" date for comparison
+            let today = new Date().toLocaleDateString("en-IN", {
+                timeZone: "Asia/Kolkata",
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            });
+            
+            const newDateDisplay = (newMessageDate === today) ? 'Today' : newMessageDate;
+            
+            // Find the LAST date header
+            const allDateHeaders = chatBox.querySelectorAll('.date-header');
+            const lastDateHeader = allDateHeaders[allDateHeaders.length - 1];
+            
+            let shouldAddDateHeader = false;
+            
+            if (!lastDateHeader) {
+                // No date header exists
+                shouldAddDateHeader = true;
+            } else {
+                // Check if date is different from last header
+                const lastDateText = lastDateHeader.textContent.trim();
+                if (lastDateText !== newDateDisplay) {
+                    shouldAddDateHeader = true;
+                }
+            }
+            
+            // Add date header if needed
+            if (shouldAddDateHeader && messageData.timestamp) {
+                const dateDiv = createDateHeader(messageData.timestamp);
+                chatBox.appendChild(dateDiv);
+            }
+
+
+            
+            // Append message
+            appendMessageToBox(chatBox, messageData);
+            
+            // Scroll to bottom
+            scrollToBottom();
+            
+            console.log('✅ Message added to UI');
+        }
+
+        // ============================================
+        // 7. SEND MESSAGE FUNCTION
+        // ============================================
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            if (!input) {
+                console.error('❌ Message input not found!');
+                return;
+            }
+            
+            const message = input.value.trim();
+            
+            console.log('📤 Send attempt:', {
+                message: message,
+                receiverId: receiverId,
+                currentRoom: currentRoom,
+                connected: socket.connected
+            });
+            
+            // Validation
+            if (!socket.connected) {
+                console.error('❌ Socket not connected!');
+                alert('Connection lost. Please refresh the page.');
+                return;
+            }
+            
+            if (!receiverId) {
+                console.error('❌ No receiver selected!');
+                alert('Please select a user to chat with.');
+                return;
+            }
+            
+            if (!message || message.length === 0) {
+                console.log('⚠️ Empty message');
+                return;
+            }
+            
+            // Send via socket
+            console.log('📡 Emitting send_message event...');
+            socket.emit('send_message', {
+                sender_id: currentUserId,
+                receiver_id: receiverId,
+                message: message
+            });
+            
+            console.log('✅ Message sent to server');
+            
+            // Clear input
+            input.value = '';
+            
+            // Stop typing indicator
+            if (isTyping) {
+                socket.emit('stop_typing', {
+                    sender_id: currentUserId,
+                    receiver_id: receiverId
+                });
+                isTyping = false;
+            }
+        }
+
+        // ============================================
+        // 8. RECEIVE MESSAGE FROM SOCKET
+        // ============================================
+
+        socket.on('receive_message', (data) => {
+            console.log('📨 Received message event:', data);
+            console.log('Current state:', {
+                receiverId: receiverId,
+                currentUserId: currentUserId,
+                currentRoom: currentRoom
+            });
+            
+            // Check if message belongs to current chat
+            const isForCurrentChat = 
+                (data.sender_id === receiverId && data.receiver_id === currentUserId) ||
+                (data.sender_id === currentUserId && data.receiver_id === receiverId);
+            
+            if (isForCurrentChat) {
+                console.log('✅ Message is for current chat, displaying...');
+                addMessageToChat(data);
+                
+                // Mark as read if from other user
+                if (data.sender_id === receiverId) {
+                    socket.emit('mark_as_read', {
+                        sender_id: receiverId,
+                        receiver_id: currentUserId
+                    });
+                }
+            } else {
+                console.log('⚠️ Message not for current chat');
+                console.log('Expected:', { sender: receiverId, receiver: currentUserId });
+                console.log('Got:', { sender: data.sender_id, receiver: data.receiver_id });
             }
         });
 
-        // ===== UPDATE UI FUNCTIONS =====
-        function updateUserStatus(userId, status, lastSeen = null) {
-            // Update online indicators in user list sidebar
-            const onlineIndicators = document.querySelectorAll(`[data-user-id="${userId}"].online-status`);
-            onlineIndicators.forEach(indicator => {
-                indicator.style.display = status === 'online' ? 'block' : 'none';
+        // ============================================
+        // 9. TYPING INDICATORS
+        // ============================================
+
+        socket.on('user_typing', (data) => {
+            console.log('⌨️ User typing:', data.user_id);
+            if (data.user_id === receiverId) {
+                showTypingIndicator(`${receiverName} is typing...`);
+            }
+        });
+
+        socket.on('user_stop_typing', (data) => {
+            console.log('⏸️ User stopped typing:', data.user_id);
+            if (data.user_id === receiverId) {
+                clearTypingIndicator();
+            }
+        });
+
+        function showTypingIndicator(text) {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.textContent = text;
+            }
+        }
+
+        function clearTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.textContent = '';
+            }
+        }
+
+        // ============================================
+        // 10. USER STATUS
+        // ============================================
+
+        socket.on('user_status_change', (data) => {
+            console.log('👤 User status change:', data);
+            
+            // Update online indicators in sidebar
+            const indicators = document.querySelectorAll(`[data-user-id="${data.user_id}"]`);
+            indicators.forEach(indicator => {
+                if (indicator.classList.contains('online-status')) {
+                    indicator.style.display = data.status === 'online' ? 'block' : 'none';
+                }
             });
             
-            // Update status in chat header if this is the current chat user
-            if (userId === receiverId) {
-                updateChatHeaderStatus(status === 'online', lastSeen);
+            // Update current chat header if this is the receiver
+            if (data.user_id === receiverId) {
+                updateChatHeaderStatus(data.status === 'online', data.last_seen);
+            }
+        });
+
+        socket.on('user_status_response', (data) => {
+            console.log('📊 User status response:', data);
+            if (data.user_id === receiverId) {
+                updateChatHeaderStatus(data.online, data.last_seen);
+            }
+        });
+
+        socket.on('online_users_list', (data) => {
+            console.log('👥 Online users:', data.users.length);
+            data.users.forEach(user => {
+                const indicators = document.querySelectorAll(`[data-user-id="${user.user_id}"]`);
+                indicators.forEach(indicator => {
+                    if (indicator.classList.contains('online-status')) {
+                        indicator.style.display = 'block';
+                    }
+                });
+            });
+        });
+
+        // ============================================
+        // 11. ERROR HANDLING
+        // ============================================
+
+        socket.on('error', (data) => {
+            console.error('❌ Socket error:', data);
+            alert(data.message || 'An error occurred');
+        });
+
+        // ============================================
+        // 12. UI HELPER FUNCTIONS
+        // ============================================
+
+        function updateChatHeader(name) {
+            const headerName = document.querySelector('.user-message-header .user-name-label p:first-child');
+            if (headerName) {
+                headerName.textContent = name;
+                console.log('✅ Updated header with:', name);
             }
         }
 
@@ -257,170 +687,11 @@
             }
         }
 
-        // ===== CHECK SPECIFIC USER STATUS =====
-        function checkUserStatus(userId) {
-            socket.emit('check_user_status', { user_id: userId });
-        }
-
-        socket.on('user_status_response', (data) => {
-            console.log('User status response:', data);
-            updateUserStatus(data.user_id, data.online ? 'online' : 'offline', data.last_seen);
-        });
-
-        // ===== REQUEST ALL ONLINE USERS =====
-        function requestOnlineUsers() {
-            socket.emit('get_online_users');
-        }
-
-        // ===== BROWSER VISIBILITY API =====
-        // Detect when user switches tabs or minimizes browser
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                console.log('User left the tab');
-                // Optional: You can pause heartbeat or reduce frequency
-            } else {
-                console.log('User returned to the tab');
-                // Resume normal heartbeat
-                socket.emit('heartbeat', { user_id: currentUserId });
+        function scrollToBottom() {
+            const messagesContainer = document.querySelector('.user-message-container .message');
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
-        });
-
-        // ===== HANDLE PAGE UNLOAD =====
-        window.addEventListener('beforeunload', () => {
-            // Leave chat room when navigating away
-            if (receiverId) {
-                socket.emit('leave_chat', {
-                    user_id: currentUserId,
-                    receiver_id: receiverId
-                });
-            }
-            
-            // Socket.IO will handle disconnect automatically
-            stopHeartbeat();
-        });
-
-        // ===== HANDLE RECEIVING MESSAGES =====
-        socket.on('receive_message', (data) => {
-            console.log('Message received:', data);
-            if (data.sender_id === receiverId || data.sender_id === currentUserId) {
-                addMessage(data);
-                
-                // Mark as read if chat is open
-                if (data.sender_id === receiverId) {
-                    socket.emit('mark_as_read', {
-                        sender_id: receiverId,
-                        receiver_id: currentUserId
-                    });
-                }
-            }
-        });
-
-        // ===== HANDLE TYPING INDICATORS =====
-        socket.on('user_typing', (data) => {
-            if (data.user_id === receiverId) {
-                document.getElementById('typing-indicator').textContent = `${receiverName} is typing...`;
-            }
-        });
-
-        socket.on('user_stop_typing', (data) => {
-            if (data.user_id === receiverId) {
-                document.getElementById('typing-indicator').textContent = '';
-            }
-        });
-
-        // ===== SEND MESSAGE =====
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
-            
-            if (message && receiverId) {
-                socket.emit('send_message', {
-                    sender_id: currentUserId,
-                    receiver_id: receiverId,
-                    message: message
-                });
-                
-                input.value = '';
-                
-                if (isTyping) {
-                    socket.emit('stop_typing', {
-                        sender_id: currentUserId,
-                        receiver_id: receiverId
-                    });
-                    isTyping = false;
-                }
-            }
-        }
-
-        // ===== EVENT LISTENERS =====
-        const sendButton = document.getElementById('user-click');
-        const messageInput = document.getElementById('messageInput');
-
-        if (sendButton) {
-            sendButton.addEventListener('click', sendMessage);
-        }
-
-        if (messageInput) {
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
-            // Typing indicator
-            messageInput.addEventListener('input', () => {
-                if (!isTyping && receiverId) {
-                    socket.emit('typing', {
-                        sender_id: currentUserId,
-                        receiver_id: receiverId
-                    });
-                    isTyping = true;
-                }
-                
-                clearTimeout(typingTimer);
-                typingTimer = setTimeout(() => {
-                    if (receiverId) {
-                        socket.emit('stop_typing', {
-                            sender_id: currentUserId,
-                            receiver_id: receiverId
-                        });
-                        isTyping = false;
-                    }
-                }, 1000);
-            });
-        }
-
-        // ===== HELPER FUNCTIONS =====
-        function addMessage(data) {
-            const messagesContainer = document.getElementById('messages');
-            if (!messagesContainer) return;
-            
-            let chatBox = document.getElementById('chat-box');
-            if (!chatBox) {
-                messagesContainer.innerHTML = '';
-                chatBox = document.createElement('div');
-                chatBox.id = 'chat-box';
-                messagesContainer.appendChild(chatBox);
-            }
-            
-            const messageDiv = document.createElement('div');
-            const isSent = data.sender_id === currentUserId;
-            messageDiv.className = isSent ? 'msg sent' : 'msg received';
-            
-            const time = new Date().toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: true 
-            });
-            
-            messageDiv.innerHTML = `
-                <p>${escapeHtml(data.message)}</p>
-                <p class="time">${time}</p>
-            `;
-            
-            chatBox.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function escapeHtml(text) {
@@ -429,23 +700,75 @@
             return div.innerHTML;
         }
 
-        // ===== AUTO-SCROLL ON LOAD =====
-        window.addEventListener('load', () => {
-            const messagesContainer = document.getElementById('messages');
-            if (messagesContainer) {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        // ============================================
+        // 13. EVENT LISTENERS
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📱 Attaching event listeners...');
+            
+            // Send button
+            const sendButton = document.getElementById('user-click');
+            if (sendButton) {
+                sendButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('🖱️ Send button clicked');
+                    sendMessage();
+                });
+                console.log('✅ Send button listener attached');
+            } else {
+                console.error('❌ Send button not found!');
             }
             
-            // Check receiver status on page load
-            if (receiverId) {
-                checkUserStatus(receiverId);
+            // Message input
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                // Enter key
+                messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        console.log('⏎ Enter key pressed');
+                        sendMessage();
+                    }
+                });
+                
+                // Typing indicator
+                messageInput.addEventListener('input', () => {
+                    if (!receiverId) return;
+                    
+                    if (!isTyping) {
+                        socket.emit('typing', {
+                            sender_id: currentUserId,
+                            receiver_id: receiverId
+                        });
+                        isTyping = true;
+                    }
+                    
+                    clearTimeout(typingTimer);
+                    typingTimer = setTimeout(() => {
+                        socket.emit('stop_typing', {
+                            sender_id: currentUserId,
+                            receiver_id: receiverId
+                        });
+                        isTyping = false;
+                    }, 1000);
+                });
+                
+                console.log('✅ Message input listeners attached');
+            } else {
+                console.error('❌ Message input not found!');
             }
+            
+            console.log('✅ All event listeners attached');
         });
 
-        // ===== PERIODIC STATUS CHECK (Optional) =====
-        // Check online users every 2 minutes
-        setInterval(() => {
-            requestOnlineUsers();
-        }, 120000); // 2 minutes
+        // ============================================
+        // 14. MAKE FUNCTIONS GLOBAL
+        // ============================================
+
+        window.openChat = openChat;
+        window.sendMessage = sendMessage;
+
+        console.log('✅ Chat script loaded successfully');
     </script>
 {% endblock %}
