@@ -41,30 +41,37 @@ searchInput.addEventListener("keyup", () => {
       searchbox.innerHTML = "";  
 
       if(data.result.length > 0){
-        data.result.forEach(user => {
-          let a = document.createElement('div')
-            a.className = "user"
-            a.href =  `${user._id}`;
-            a.innerHTML =  `
-                <a href="/chat/${user._id}" class="user" data-user-id="${user._id}">
+          data.result.forEach(user => {
+              let a = document.createElement('div');
+              a.className = "user";
+              a.onclick = () => openChat(user._id, user.name);
+              a.innerHTML = `
                   <div class="user-img">
-                    <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
+                      <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
+                      <span class="online-status" style="display: none;"></span>
                   </div>
                   <div class="user-name-label">
-                    <p>${user.name}</p>
-                    <p>${user.online ? "Online" : "Offline"}</p>
+                      <p></p>
+                      <p></p>
                   </div>
                   <div class='user-chat-logout follow'>
                       <button type="submit" class="${user.status}" id="btn-${user._id}" onclick="followUser('${user._id}')">${user.status}</button>
                   </div>
-              </a>
-            `
-          searchbox.appendChild(a);
-        });
-        searchbox.style.display = "block";
-      } else{
-        searchbox.innerHTML = "<p class='no-results'>No results found</p>";
-        searchbox.style.display = "block";
+              `;
+
+              const onlineStatus = a.querySelector('.online-status');
+              onlineStatus.dataset.userId = user._id;
+              
+              const [namePara, aboutPara] = a.querySelectorAll('.user-name-label p');
+              namePara.textContent = user.name || 'Unknown';
+              aboutPara.textContent = user.online ? "online" : "offline" || '';
+              
+              searchbox.appendChild(a);
+          });
+          searchbox.style.display = "block";
+      } else {
+          searchbox.innerHTML = "<p class='no-results'>No results found</p>";
+          searchbox.style.display = "block";
       }
     } catch (error) {
       console.log(error);
@@ -79,7 +86,6 @@ BackBtn.addEventListener("click", () => {
     BackBtn.style.display = "none";
     searchClearIcon.style.display = "none";
     searchInput.value = "";
-    location.reload();
   }
 });
 
@@ -107,4 +113,5 @@ async function followUser(userId) {
     console.log(error);
   }
 }
+
 

@@ -16,9 +16,10 @@
                         <button type="button" class="user-chat-header-icon">
                             <i class="fa-solid fa-ellipsis-vertical"></i>
                         </button>
+                        <!-- popup box logout and profile edit -->
                         <div class="logout-container">
                             <div class="logout-item">
-                                <div class="profile pad">
+                                <div class="profile pad" id="profile-edit-open">
                                     <svg fill="none" height="24" viewBox="0 0 26 26" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12.5" cy="11.168" r="3.5" stroke="currentColor" stroke-linecap="round" stroke-width="1.6"></circle><circle cx="12.5" cy="13.5" r="10.5" stroke="currentColor" stroke-width="1.6"></circle><path d="M19.5 21.3236C19.0871 20.0832 18.1773 18.9872 16.9117 18.2054C15.646 17.4237 14.0953 17 12.5 17C10.9047 17 9.35398 17.4237 8.08835 18.2054C6.82271 18.9872 5.91289 20.0832 5.5 21.3236" stroke="currentColor" stroke-linecap="round" stroke-width="1.6"></path></svg>
                                     <span>profile</span>
                                 </div>
@@ -28,9 +29,32 @@
                                         <button type="submit">Log out</button>
                                     </form>
                                 </div>
-                                <div class="Mode-change de">
-                                    <button>🌤️</button>
-                                    <button>🌠</button>
+                            </div>
+                        </div>
+                        <!-- profile -->
+                        <div class="profile-edit-container">
+                            <div class="profile-main-section">
+                                <div class="profile-container">
+                                    <div class="close-btn" id="close-btn-profile">
+                                        <i class="fa-solid fa-xmark xmark-profile"></i>
+                                        <i class="fa-solid fa-arrow-left arrow-profile"></i>
+                                    </div>
+                                    <div class="profile-logo">
+                                        <svg fill="none" height="24" viewBox="0 0 26 26" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12.5" cy="11.168" r="3.5" stroke="currentColor" stroke-linecap="round" stroke-width="1.6"></circle><circle cx="12.5" cy="13.5" r="10.5" stroke="currentColor" stroke-width="1.6"></circle><path d="M19.5 21.3236C19.0871 20.0832 18.1773 18.9872 16.9117 18.2054C15.646 17.4237 14.0953 17 12.5 17C10.9047 17 9.35398 17.4237 8.08835 18.2054C6.82271 18.9872 5.91289 20.0832 5.5 21.3236" stroke="currentColor" stroke-linecap="round" stroke-width="1.6"></path></svg>
+                                    </div>
+                                    <div class="profile-edit-input">
+                                        <form action="/editProfile" method="post">
+                                            <div class="user-input-section-profile-edit">
+                                                <input type="text" value="{{ session['name'] }}" name="name" id="profile-input-name" placeholder="User Name">
+                                            </div>
+                                            <div class="user-input-section-profile-edit">
+                                                <input type="text" value="{{ session['about'] }}" name="about" id="profile-input-about" placeholder="About us">
+                                            </div>
+                                            <div class="user-input-section-profile-edit">
+                                                <button class="btn-user-profile" type="submit">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -41,7 +65,7 @@
                                 <svg viewBox="0 0 20 20" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>search-refreshed-thin</title><path fill-rule="evenodd" clip-rule="evenodd" d="M4.36653 4.3664C5.36341 3.36953 6.57714 2.87 8.00012 2.87C9.42309 2.87 10.6368 3.36953 11.6337 4.3664C12.6306 5.36329 13.1301 6.57724 13.1301 8.00062C13.1301 8.57523 13.0412 9.11883 12.8624 9.63057C12.6972 10.1038 12.4733 10.5419 12.1909 10.9444L16.5712 15.3247C16.7454 15.4989 16.8385 15.7046 16.8385 15.9375C16.8385 16.1704 16.7454 16.3761 16.5712 16.5503C16.396 16.7254 16.1866 16.8175 15.948 16.8175C15.7095 16.8175 15.5001 16.7254 15.3249 16.5503L10.9448 12.1906C10.5421 12.4731 10.104 12.697 9.63069 12.8623C9.11895 13.041 8.57535 13.13 8.00074 13.13C6.57736 13.13 5.36341 12.6305 4.36653 11.6336C3.36965 10.6367 2.87012 9.42297 2.87012 8C2.87012 6.57702 3.36965 5.36328 4.36653 4.3664ZM8.00012 4.63C7.06198 4.63 6.26877 4.95685 5.61287 5.61275C4.95698 6.26865 4.63012 7.06186 4.63012 8C4.63012 8.93813 4.95698 9.73134 5.61287 10.3872C6.26877 11.0431 7.06198 11.37 8.00012 11.37C8.93826 11.37 9.73146 11.0431 10.3874 10.3872C11.0433 9.73134 11.3701 8.93813 11.3701 8C11.3701 7.06186 11.0433 6.26865 10.3874 5.61275C9.73146 4.95685 8.93826 4.63 8.00012 4.63Z" fill="currentColor"></path></svg>
                             </div>
                             <div class="user-chat-search-input">   
-                                <input type="text" name="/search" id="search" class="search" placeholder="Search User..." autocomplete="off" >
+                                <input type="text" name="/search" id="search" class="search" placeholder="Search User..." autocomplete="off">
                             </div>
                             <button type="button" class="user-chat-search-icon search-clear-icon" id="clear-search">
                                 <svg viewBox="0 0 24 24" height="20" width="20" preserveAspectRatio="xMidYMid meet" class="" fill="none"><title>ic-close</title><path d="M12 13.4L7.09999 18.3C6.91665 18.4834 6.68332 18.575 6.39999 18.575C6.11665 18.575 5.88332 18.4834 5.69999 18.3C5.51665 18.1167 5.42499 17.8834 5.42499 17.6C5.42499 17.3167 5.51665 17.0834 5.69999 16.9L10.6 12L5.69999 7.10005C5.51665 6.91672 5.42499 6.68338 5.42499 6.40005C5.42499 6.11672 5.51665 5.88338 5.69999 5.70005C5.88332 5.51672 6.11665 5.42505 6.39999 5.42505C6.68332 5.42505 6.91665 5.51672 7.09999 5.70005L12 10.6L16.9 5.70005C17.0833 5.51672 17.3167 5.42505 17.6 5.42505C17.8833 5.42505 18.1167 5.51672 18.3 5.70005C18.4833 5.88338 18.575 6.11672 18.575 6.40005C18.575 6.68338 18.4833 6.91672 18.3 7.10005L13.4 12L18.3 16.9C18.4833 17.0834 18.575 17.3167 18.575 17.6C18.575 17.8834 18.4833 18.1167 18.3 18.3C18.1167 18.4834 17.8833 18.575 17.6 18.575C17.3167 18.575 17.0833 18.4834 16.9 18.3L12 13.4Z" fill="currentColor"></path></svg>
@@ -56,7 +80,7 @@
                                 <div class="user" onclick="openChat('{{ user._id }}', '{{ user.name }}')">
                                     <div class="user-img">
                                         <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
-                                        <span class="online-status" data-user-id="{{ user._id }}" style="display: none;"></span>
+                                        <!-- <span class="online-status" data-user-id="{{ user._id }}" style="display: none;"></span> -->
                                     </div>
                                     <div class="user-name-label">
                                         <p>{{ user.name }}</p>
@@ -88,8 +112,8 @@
                         </div>
                     </div> -->
                 </div>
-            </div>
-            
+            </div>  
+
             <div class="user-chat-container">
                 <div class="user-child-chat-container">
                     <div class="user-message-header">
@@ -110,7 +134,6 @@
                         <div class="message" id="messages">
                         
                         </div>
-                        <div id="typing-indicator" style="padding: 10px 20px; color: #999; font-style: italic; min-height: 30px;"></div>
                     </div>
                     <div class="user-message-send-container">
                        <div class="user-message">
@@ -139,7 +162,7 @@
     <script src="{{ url_for('static',filename='js/message.js')}}"></script>
     <!-- Add this JavaScript to your index.html template -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
-    <script>
+    <script nonce aria-hidden="true">
         // ============================================
         // CHAT APPLICATION - FIXED TO MATCH SERVER
         // ============================================
@@ -179,6 +202,86 @@
             console.log('📡 Server response:', data);
         });
 
+        // Add these variables at the top with other globals
+        let heartbeatInterval = null;
+
+        // Update your socket.on('connect') to include heartbeat
+        socket.on('connect', () => {
+            console.log('✅ Connected to socket server, SID:', socket.id);
+            
+            // Announce user is online
+            socket.emit('user_online', {
+                user_id: currentUserId,
+                username: currentUsername
+            });
+            
+            // Start heartbeat - Add this!
+            startHeartbeat();
+        });
+
+        socket.on('disconnect', () => {
+            console.log('❌ Disconnected from server');
+            stopHeartbeat();  // Add this!
+        });
+
+        // Add these NEW functions after your socket handlers:
+
+        // ============================================
+        // HEARTBEAT FUNCTIONS
+        // ============================================
+
+        function startHeartbeat() {
+            // Clear any existing interval
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+            }
+            
+            // Send heartbeat every 30 seconds
+            heartbeatInterval = setInterval(() => {
+                if (socket.connected) {
+                    socket.emit('heartbeat', {
+                        user_id: currentUserId
+                    });
+                    console.log('💓 Heartbeat sent');
+                }
+            }, 30000); // 30 seconds
+            
+            console.log('✅ Heartbeat started');
+        }
+
+        function stopHeartbeat() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+                console.log('❌ Heartbeat stopped');
+            }
+        }
+
+        // Handle browser visibility (optional but recommended)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('📴 Tab inactive');
+                // Optional: you can reduce heartbeat frequency here
+            } else {
+                console.log('📱 Tab active');
+                // Send immediate heartbeat when tab becomes active
+                if (socket.connected) {
+                    socket.emit('heartbeat', { user_id: currentUserId });
+                }
+            }
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            stopHeartbeat();
+            if (receiverId) {
+                socket.emit('leave_chat', {
+                    user_id: currentUserId,
+                    receiver_id: receiverId
+                });
+            }
+        });
+
         // ============================================
         // 2. OPEN CHAT FUNCTION
         // ============================================
@@ -215,7 +318,7 @@
             await loadMessages(otherId);
             
             // Clear typing indicator
-            clearTypingIndicator();
+            // clearTypingIndicator();
             
             // Check user status
             socket.emit('check_user_status', { user_id: otherId });
@@ -302,8 +405,9 @@
                 messagesContainer.appendChild(chatBox);
                 
                 // Scroll to bottom
-                scrollToBottom();
-                
+                // scrollToBottom();
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                
                 console.log('✅ Messages loaded and displayed');
                 
             } catch (error) {
@@ -457,7 +561,11 @@
             appendMessageToBox(chatBox, messageData);
             
             // Scroll to bottom
-            scrollToBottom();
+            // scrollToBottom();
+            const messagesContainer = document.querySelector('.user-message-container .message');
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
             
             console.log('✅ Message added to UI');
         }
@@ -562,33 +670,20 @@
         // 9. TYPING INDICATORS
         // ============================================
 
-        socket.on('user_typing', (data) => {
-            console.log('⌨️ User typing:', data.user_id);
-            if (data.user_id === receiverId) {
-                showTypingIndicator(`${receiverName} is typing...`);
-            }
-        });
+        // socket.on('user_typing', (data) => {
+        //     console.log('⌨️ User typing:', data.user_id);
+        //     if (data.user_id === receiverId) {
+        //         showTypingIndicator(`${receiverName} is typing...`);
+        //     }
+        // });
 
-        socket.on('user_stop_typing', (data) => {
-            console.log('⏸️ User stopped typing:', data.user_id);
-            if (data.user_id === receiverId) {
-                clearTypingIndicator();
-            }
-        });
+        // socket.on('user_stop_typing', (data) => {
+        //     console.log('⏸️ User stopped typing:', data.user_id);
+        //     if (data.user_id === receiverId) {
+        //         clearTypingIndicator();
+        //     }
+        // });
 
-        function showTypingIndicator(text) {
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) {
-                indicator.textContent = text;
-            }
-        }
-
-        function clearTypingIndicator() {
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) {
-                indicator.textContent = '';
-            }
-        }
 
         // ============================================
         // 10. USER STATUS
@@ -598,12 +693,12 @@
             console.log('👤 User status change:', data);
             
             // Update online indicators in sidebar
-            const indicators = document.querySelectorAll(`[data-user-id="${data.user_id}"]`);
-            indicators.forEach(indicator => {
-                if (indicator.classList.contains('online-status')) {
-                    indicator.style.display = data.status === 'online' ? 'block' : 'none';
-                }
-            });
+            // const indicators = document.querySelectorAll(`[data-user-id="${data.user_id}"]`);
+            // indicators.forEach(indicator => {
+            //     if (indicator.classList.contains('online-status')) {
+            //         indicator.style.display = data.status === 'online' ? 'block' : 'none';
+            //     }
+            // });
             
             // Update current chat header if this is the receiver
             if (data.user_id === receiverId) {
@@ -618,17 +713,17 @@
             }
         });
 
-        socket.on('online_users_list', (data) => {
-            console.log('👥 Online users:', data.users.length);
-            data.users.forEach(user => {
-                const indicators = document.querySelectorAll(`[data-user-id="${user.user_id}"]`);
-                indicators.forEach(indicator => {
-                    if (indicator.classList.contains('online-status')) {
-                        indicator.style.display = 'block';
-                    }
-                });
-            });
-        });
+        // socket.on('online_users_list', (data) => {
+        //     console.log('👥 Online users:', data.users.length);
+        //     data.users.forEach(user => {
+        //         const indicators = document.querySelectorAll(`[data-user-id="${user.user_id}"]`);
+        //         indicators.forEach(indicator => {
+        //             if (indicator.classList.contains('online-status')) {
+        //                 indicator.style.display = 'block';
+        //             }
+        //         });
+        //     });
+        // });
 
         // ============================================
         // 11. ERROR HANDLING
@@ -651,7 +746,7 @@
             }
         }
 
-        function updateChatHeaderStatus(isOnline, lastSeen = null) {
+       function updateChatHeaderStatus(isOnline, lastSeen = null) {
             const statusText = document.querySelector('.user-status-text');
             if (!statusText) return;
             
@@ -663,22 +758,60 @@
                 if (lastSeen) {
                     const lastSeenDate = new Date(lastSeen);
                     const now = new Date();
-                    const diffMinutes = Math.floor((now - lastSeenDate) / 60000);
                     
-                    let lastSeenText;
-                    if (diffMinutes < 1) {
-                        lastSeenText = 'Just now';
-                    } else if (diffMinutes < 60) {
-                        lastSeenText = `${diffMinutes} min ago`;
-                    } else if (diffMinutes < 1440) {
-                        const hours = Math.floor(diffMinutes / 60);
-                        lastSeenText = `${hours} hour${hours > 1 ? 's' : ''} ago`;
-                    } else {
-                        const days = Math.floor(diffMinutes / 1440);
-                        lastSeenText = `${days} day${days > 1 ? 's' : ''} ago`;
+                    // Get start of today in India timezone
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    // Get start of yesterday
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    
+                    // Check if last seen was today
+                    if (lastSeenDate >= today) {
+                        const timeStr = lastSeenDate.toLocaleString('en-IN', {
+                            timeZone: 'Asia/Kolkata',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                        statusText.textContent = `Last seen today at ${timeStr}`;
                     }
-                    
-                    statusText.textContent = `Last seen ${lastSeenText}`;
+                    // Check if last seen was yesterday
+                    else if (lastSeenDate >= yesterday) {
+                        const timeStr = lastSeenDate.toLocaleString('en-IN', {
+                            timeZone: 'Asia/Kolkata',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                        statusText.textContent = `Last seen yesterday at ${timeStr}`;
+                    }
+                    // More than a day ago
+                    else {
+                        const diffMinutes = Math.floor((now - lastSeenDate) / 60000);
+                        
+                        if (diffMinutes < 60) {
+                            statusText.textContent = `Last seen ${diffMinutes} min ago`;
+                        } else if (diffMinutes < 1440) {
+                            const hours = Math.floor(diffMinutes / 60);
+                            statusText.textContent = `Last seen ${hours} hour${hours > 1 ? 's' : ''} ago`;
+                        } else {
+                            const days = Math.floor(diffMinutes / 1440);
+                            if (days < 7) {
+                                statusText.textContent = `Last seen ${days} day${days > 1 ? 's' : ''} ago`;
+                            } else {
+                                // Show date for older than a week
+                                const dateStr = lastSeenDate.toLocaleDateString('en-IN', {
+                                    timeZone: 'Asia/Kolkata',
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric'
+                                });
+                                statusText.textContent = `Last seen on ${dateStr}`;
+                            }
+                        }
+                    }
                 } else {
                     statusText.textContent = 'Offline';
                 }
@@ -686,7 +819,7 @@
                 statusText.style.fontWeight = 'normal';
             }
         }
-
+        
         function scrollToBottom() {
             const messagesContainer = document.querySelector('.user-message-container .message');
             if (messagesContainer) {

@@ -3,7 +3,7 @@ from flask_socketio import emit, join_room, leave_room
 from flask import request
 from app import mongo
 from bson.objectid import ObjectId
-from datetime import datetime
+from datetime import datetime,timezone
 
 # Store active users with their socket IDs
 active_users = {}  # Format: {socket_id: {user_id, username, rooms, last_seen}}
@@ -38,7 +38,7 @@ def register_socket_events(socketio):
                             {
                                 '$set': {
                                     'online': False,
-                                    'last_seen': datetime.now()
+                                    'last_seen': datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
                                 }
                             }
                         )
@@ -48,7 +48,7 @@ def register_socket_events(socketio):
                             'user_id': user_id,
                             'username': user_info['username'],
                             'status': 'offline',
-                            'last_seen': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                            'last_seen': datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
                         }, broadcast=True)
                         
                         print(f"User {user_info['username']} ({user_id}) is now OFFLINE")
@@ -75,7 +75,7 @@ def register_socket_events(socketio):
             'user_id': user_id,
             'username': username,
             'rooms': [],
-            'last_seen': datetime.now()
+            'last_seen': datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         }
         
         # Track all sockets for this user (for multiple tabs)
@@ -90,7 +90,7 @@ def register_socket_events(socketio):
                 {
                     '$set': {
                         'online': True,
-                        'last_seen': datetime.now()
+                        'last_seen': datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
                     }
                 }
             )
@@ -130,17 +130,37 @@ def register_socket_events(socketio):
         user_id = data.get('user_id')
         
         if request.sid in active_users:
-            active_users[request.sid]['last_seen'] = datetime.now()
+            active_users[request.sid]['last_seen'] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
             
             # Update last_seen in database
             try:
                 mongo.db.users.update_one(
                     {'_id': ObjectId(user_id)},
-                    {'$set': {'last_seen': datetime.now()}}
+                    {'$set': {'last_seen': datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")}}
                 )
             except Exception as e:
                 print(f"Error updating heartbeat: {e}")
     
+    # @socketio.on('check_user_status')
+    # def handle_check_user_status(data):
+    #     """Check if a specific user is online"""
+    #     user_id = data.get('user_id')
+        
+    #     is_online = user_id in user_sockets and len(user_sockets[user_id]) > 0
+        
+    #     # Get last_seen from database
+    #     try:
+    #         user_doc = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+    #         last_seen = user_doc.get('last_seen') if user_doc else None
+            
+    #         emit('user_status_response', {
+    #             'user_id': user_id,
+    #             'online': is_online,
+    #             'last_seen': last_seen.strftime('%Y-%m-%d %H:%M:%S') if last_seen else None
+    #         })
+    #     except Exception as e:
+    #         print(f"Error checking user status: {e}")
+
     @socketio.on('check_user_status')
     def handle_check_user_status(data):
         """Check if a specific user is online"""
@@ -153,10 +173,11 @@ def register_socket_events(socketio):
             user_doc = mongo.db.users.find_one({'_id': ObjectId(user_id)})
             last_seen = user_doc.get('last_seen') if user_doc else None
             
+            # Return the last_seen as-is (it's already a string in ISO format)
             emit('user_status_response', {
                 'user_id': user_id,
                 'online': is_online,
-                'last_seen': last_seen.strftime('%Y-%m-%d %H:%M:%S') if last_seen else None
+                'last_seen': last_seen  # Already a string like "2025-12-06T10:00:00.123Z"
             })
         except Exception as e:
             print(f"Error checking user status: {e}")
@@ -182,15 +203,46 @@ def register_socket_events(socketio):
         
         emit('online_users_list', {'users': online_users_data})
     
+    # @socketio.on('join_chat')
+    # def handle_join_chat(data):
+    #     """Join a specific chat room"""
+    #     user_id = data.get('user_id')
+    #     receiver_id = data.get('receiver_id')
+        
+    #     # Create room ID (sorted to ensure same room for both users)
+    #     room = '_'.join(sorted([user_id, receiver_id]))
+        
+    #     join_room(room)
+        
+    #     if request.sid in active_users:
+    #         if 'rooms' not in active_users[request.sid]:
+    #             active_users[request.sid]['rooms'] = []
+    #         active_users[request.sid]['rooms'].append(room)
+    #         active_users[request.sid]['current_room'] = room
+        
+    #     print(f"User {user_id} joined room {room}")
+        
+    #     # Send receiver's current status
+    #     receiver_online = receiver_id in user_sockets and len(user_sockets[receiver_id]) > 0
+        
+    #     try:
+    #         receiver_doc = mongo.db.users.find_one({'_id': ObjectId(receiver_id)})
+            
+    #         emit('joined_room', {
+    #             'room': room,
+    #             'receiver_online': receiver_online,
+    #             'receiver_last_seen': receiver_doc.get('last_seen').strftime('%Y-%m-%d %H:%M:%S') if receiver_doc and receiver_doc.get('last_seen') else None
+    #         })
+    #     except Exception as e:
+    #         print(f"Error getting receiver status: {e}")
     @socketio.on('join_chat')
     def handle_join_chat(data):
         """Join a specific chat room"""
         user_id = data.get('user_id')
         receiver_id = data.get('receiver_id')
         
-        # Create room ID (sorted to ensure same room for both users)
+        # Create room ID
         room = '_'.join(sorted([user_id, receiver_id]))
-        
         join_room(room)
         
         if request.sid in active_users:
@@ -206,11 +258,12 @@ def register_socket_events(socketio):
         
         try:
             receiver_doc = mongo.db.users.find_one({'_id': ObjectId(receiver_id)})
+            last_seen_value = receiver_doc.get('last_seen') if receiver_doc else None
             
             emit('joined_room', {
                 'room': room,
                 'receiver_online': receiver_online,
-                'receiver_last_seen': receiver_doc.get('last_seen').strftime('%Y-%m-%d %H:%M:%S') if receiver_doc and receiver_doc.get('last_seen') else None
+                'receiver_last_seen': last_seen_value  # Already a string
             })
         except Exception as e:
             print(f"Error getting receiver status: {e}")
@@ -249,7 +302,7 @@ def register_socket_events(socketio):
                 'sender_id': ObjectId(sender_id),
                 'receiver_id': ObjectId(receiver_id),
                 'message': message_text.strip(),
-                'timestamp': datetime.now(),
+                'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 'is_read': False
             }
             
@@ -273,7 +326,7 @@ def register_socket_events(socketio):
                 'receiver_id': receiver_id,
                 'sender_name': sender.get('name', 'Unknown'),
                 'message': message_text.strip(),
-                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'timestamp': datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 'is_read': False
             }
             
@@ -337,3 +390,4 @@ def register_socket_events(socketio):
             
         except Exception as e:
             print(f"Error marking messages as read: {e}")
+
