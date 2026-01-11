@@ -4,6 +4,15 @@ A full‑stack **real‑time chat application** built using **HTML, CSS, JavaScr
 
 ---
 
+![chat App Screenshot1](image/Screenshot 2026-01-11 163843.png)
+---
+![chat App Screenshot2](image/Screenshot 2026-01-11 163929.png)
+---
+![chat App Screenshot3](image/Screenshot 2026-01-11 164058.png)
+---
+![chat App Screenshot4](image/Screenshot 2026-01-11 164138.png)
+---
+
 ## 🚀 Features
 
 * 🔐 User Registration & Login
