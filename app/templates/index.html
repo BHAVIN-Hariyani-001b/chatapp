@@ -93,24 +93,6 @@
                     <div class="user-search-list">
                         <!-- user search list show to user is search and show list in this section  -->
                     </div>
-                    <!-- <div class="user-profile-show">
-                        <div class="user">
-                            <div class="user-img">
-                                <svg viewBox="0 0 48 48" height="212" width="212" preserveAspectRatio="xMidYMid meet" class="xh8yej3 x5yr21d x1c9tyrk xeusxvb x1pahc9y x1ertn4p x1od0jb8 x4u6w88 x1g40iwv" fill="none"><title>default-contact-refreshed</title><path d="M24 23q-1.857 0-3.178-1.322Q19.5 20.357 19.5 18.5t1.322-3.178T24 14t3.178 1.322Q28.5 16.643 28.5 18.5t-1.322 3.178T24 23m-6.75 10q-.928 0-1.59-.66-.66-.662-.66-1.59v-.9q0-.956.492-1.758A3.3 3.3 0 0 1 16.8 26.87a16.7 16.7 0 0 1 3.544-1.308q1.8-.435 3.656-.436 1.856 0 3.656.436T31.2 26.87q.816.422 1.308 1.223T33 29.85v.9q0 .928-.66 1.59-.662.66-1.59.66z" fill="#606263" class="xvt3oi1"></path></svg>
-                            </div>
-                            <div class="user-name-label user-profile-label">
-                               <div class="user-chat-id">
-                                    <p>{{ session['name'] }}</p>
-                                    <p>{{ session['about'] }}</p>
-                               </div>
-                                <div class="user-chat-logout">
-                                    <form action="{{ url_for('auth.logout') }}" method="GET">
-                                        <button type="submit">Logout</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
                 </div>
             </div>  
 
@@ -159,7 +141,7 @@
 
     <script src="{{ url_for('static',filename='js/search.js')}}"></script>
     <script src="{{ url_for('static',filename='js/mobile_desktop.js')}}"></script>
-    <script src="{{ url_for('static',filename='js/message.js')}}"></script>
+    <!-- <script src="{{ url_for('static',filename='js/message.js')}}"></script> -->
     <!-- Add this JavaScript to your index.html template -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
     <script nonce aria-hidden="true">
@@ -178,14 +160,13 @@
         let isTyping = false;
         let typingTimer = null;
 
-        console.log('🚀 Chat initialized with User ID:', currentUserId);
+        // console.log('🚀 Chat initialized with User ID:', currentUserId);
 
         // ============================================
         // 1. SOCKET CONNECTION
         // ============================================
 
         socket.on('connect', () => {
-            console.log('✅ Connected to socket server, SID:', socket.id);
             
             // Announce user is online
             socket.emit('user_online', {
@@ -194,20 +175,20 @@
             });
         });
 
-        socket.on('disconnect', () => {
-            console.log('❌ Disconnected from server');
-        });
+        // socket.on('disconnect', () => {
+        //     console.log('❌ Disconnected from server');
+        // });
 
-        socket.on('connection_response', (data) => {
-            console.log('📡 Server response:', data);
-        });
+        // socket.on('connection_response', (data) => {
+        //     console.log('📡 Server response:', data);
+        // });
 
         // Add these variables at the top with other globals
         let heartbeatInterval = null;
 
         // Update your socket.on('connect') to include heartbeat
         socket.on('connect', () => {
-            console.log('✅ Connected to socket server, SID:', socket.id);
+            // console.log('✅ Connected to socket server, SID:', socket.id);
             
             // Announce user is online
             socket.emit('user_online', {
@@ -220,7 +201,7 @@
         });
 
         socket.on('disconnect', () => {
-            console.log('❌ Disconnected from server');
+            // console.log('❌ Disconnected from server');
             stopHeartbeat();  // Add this!
         });
 
@@ -242,28 +223,28 @@
                     socket.emit('heartbeat', {
                         user_id: currentUserId
                     });
-                    console.log('💓 Heartbeat sent');
+                    // console.log('💓 Heartbeat sent');
                 }
             }, 30000); // 30 seconds
             
-            console.log('✅ Heartbeat started');
+            // console.log('✅ Heartbeat started');
         }
 
         function stopHeartbeat() {
             if (heartbeatInterval) {
                 clearInterval(heartbeatInterval);
                 heartbeatInterval = null;
-                console.log('❌ Heartbeat stopped');
+                // console.log('❌ Heartbeat stopped');
             }
         }
 
         // Handle browser visibility (optional but recommended)
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
-                console.log('📴 Tab inactive');
+                // console.log('📴 Tab inactive');
                 // Optional: you can reduce heartbeat frequency here
             } else {
-                console.log('📱 Tab active');
+                // console.log('📱 Tab active');
                 // Send immediate heartbeat when tab becomes active
                 if (socket.connected) {
                     socket.emit('heartbeat', { user_id: currentUserId });
@@ -287,7 +268,7 @@
         // ============================================
 
         async function openChat(otherId, otherName) {
-            console.log('📂 Opening chat with:', otherName, '(ID:', otherId + ')');
+            // console.log('📂 Opening chat with:', otherName, '(ID:', otherId + ')');
             
             // Leave previous room if exists
             if (currentRoom && receiverId) {
@@ -303,7 +284,7 @@
             receiverName = otherName;
             currentRoom = [currentUserId, otherId].sort().join('_');
             
-            console.log('🏠 New room will be:', currentRoom);
+            // console.log('🏠 New room will be:', currentRoom);
             
             // Join new chat room
             socket.emit('join_chat', {
@@ -323,7 +304,7 @@
             // Check user status
             socket.emit('check_user_status', { user_id: otherId });
             
-            console.log('✅ Chat opened successfully');
+            // console.log('✅ Chat opened successfully');
         }
 
         // ============================================
@@ -331,8 +312,8 @@
         // ============================================
 
         socket.on('joined_room', (data) => {
-            console.log('🏠 Joined room:', data.room);
-            console.log('📊 Receiver online:', data.receiver_online);
+            // console.log('🏠 Joined room:', data.room);
+            // console.log('📊 Receiver online:', data.receiver_online);
             
             // Update receiver status in header
             updateChatHeaderStatus(data.receiver_online, data.receiver_last_seen);
@@ -358,17 +339,17 @@
 
         async function loadMessages(otherId) {
             try {
-                console.log('📥 Loading messages for user:', otherId);
+                // console.log('📥 Loading messages for user:', otherId);
                 
                 const response = await fetch(`/api/chat/${otherId}`);
                 const data = await response.json();
                 
-                console.log('📨 Loaded', data.messages.length, 'messages');
+                // console.log('📨 Loaded', data.messages.length, 'messages');
                 
                 // Clear message container
                 const messagesContainer = document.querySelector('.user-message-container .message');
                 if (!messagesContainer) {
-                    console.error('❌ Messages container not found!');
+                    // console.error('❌ Messages container not found!');
                     return;
                 }
                 
@@ -408,10 +389,10 @@
                 // scrollToBottom();
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                                 
-                console.log('✅ Messages loaded and displayed');
+                // console.log('✅ Messages loaded and displayed');
                 
             } catch (error) {
-                console.error('❌ Error loading messages:', error);
+                // console.error('❌ Error loading messages:', error);
                 alert('Failed to load messages. Please try again.');
             }
         }
@@ -450,7 +431,7 @@
                         hour12: true
                     });
                 } else {
-                    console.error("Invalid timestamp:", messageData.timestamp);
+                    // console.error("Invalid timestamp:", messageData.timestamp);
                 }
             }
 
@@ -470,7 +451,7 @@
 
 
         function createDateHeader(utcTime = ""){
-            console.log(utcTime);
+            // console.log(utcTime);
             if(!utcTime){
                 return;
             }
@@ -496,17 +477,17 @@
         }
 
         function addMessageToChat(messageData) {
-            console.log('💬 Adding new message to chat:', messageData);
+            // console.log('💬 Adding new message to chat:', messageData);
             
             // Get active chat box
             let chatBox = document.getElementById('active-chat-box');
             
             // If no chat box exists, create one
             if (!chatBox) {
-                console.log('📦 Creating new chat box');
+                // console.log('📦 Creating new chat box');
                 const messagesContainer = document.querySelector('.user-message-container .message');
                 if (!messagesContainer) {
-                    console.error('❌ Messages container not found!');
+                    // console.error('❌ Messages container not found!');
                     return;
                 }
                 
@@ -567,7 +548,7 @@
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
             
-            console.log('✅ Message added to UI');
+            // console.log('✅ Message added to UI');
         }
 
         // ============================================
@@ -577,46 +558,46 @@
         function sendMessage() {
             const input = document.getElementById('messageInput');
             if (!input) {
-                console.error('❌ Message input not found!');
+                // console.error('❌ Message input not found!');
                 return;
             }
             
             const message = input.value.trim();
             
-            console.log('📤 Send attempt:', {
-                message: message,
-                receiverId: receiverId,
-                currentRoom: currentRoom,
-                connected: socket.connected
-            });
+            // console.log('📤 Send attempt:', {
+            //     message: message,
+            //     receiverId: receiverId,
+            //     currentRoom: currentRoom,
+            //     connected: socket.connected
+            // });
             
             // Validation
             if (!socket.connected) {
-                console.error('❌ Socket not connected!');
+                // console.error('❌ Socket not connected!');
                 alert('Connection lost. Please refresh the page.');
                 return;
             }
             
             if (!receiverId) {
-                console.error('❌ No receiver selected!');
+                // console.error('❌ No receiver selected!');
                 alert('Please select a user to chat with.');
                 return;
             }
             
             if (!message || message.length === 0) {
-                console.log('⚠️ Empty message');
+                // console.log('⚠️ Empty message');
                 return;
             }
             
             // Send via socket
-            console.log('📡 Emitting send_message event...');
+            // console.log('📡 Emitting send_message event...');
             socket.emit('send_message', {
                 sender_id: currentUserId,
                 receiver_id: receiverId,
                 message: message
             });
             
-            console.log('✅ Message sent to server');
+            // console.log('✅ Message sent to server');
             
             // Clear input
             input.value = '';
@@ -636,12 +617,12 @@
         // ============================================
 
         socket.on('receive_message', (data) => {
-            console.log('📨 Received message event:', data);
-            console.log('Current state:', {
-                receiverId: receiverId,
-                currentUserId: currentUserId,
-                currentRoom: currentRoom
-            });
+            // console.log('📨 Received message event:', data);
+            // console.log('Current state:', {
+            //     receiverId: receiverId,
+            //     currentUserId: currentUserId,
+            //     currentRoom: currentRoom
+            // });
             
             // Check if message belongs to current chat
             const isForCurrentChat = 
@@ -649,7 +630,7 @@
                 (data.sender_id === currentUserId && data.receiver_id === receiverId);
             
             if (isForCurrentChat) {
-                console.log('✅ Message is for current chat, displaying...');
+                // console.log('✅ Message is for current chat, displaying...');
                 addMessageToChat(data);
                 
                 // Mark as read if from other user
@@ -660,9 +641,9 @@
                     });
                 }
             } else {
-                console.log('⚠️ Message not for current chat');
-                console.log('Expected:', { sender: receiverId, receiver: currentUserId });
-                console.log('Got:', { sender: data.sender_id, receiver: data.receiver_id });
+                // console.log('⚠️ Message not for current chat');
+                // console.log('Expected:', { sender: receiverId, receiver: currentUserId });
+                // console.log('Got:', { sender: data.sender_id, receiver: data.receiver_id });
             }
         });
 
@@ -690,7 +671,7 @@
         // ============================================
 
         socket.on('user_status_change', (data) => {
-            console.log('👤 User status change:', data);
+            // console.log('👤 User status change:', data);
             
             // Update online indicators in sidebar
             // const indicators = document.querySelectorAll(`[data-user-id="${data.user_id}"]`);
@@ -707,7 +688,7 @@
         });
 
         socket.on('user_status_response', (data) => {
-            console.log('📊 User status response:', data);
+            // console.log('📊 User status response:', data);
             if (data.user_id === receiverId) {
                 updateChatHeaderStatus(data.online, data.last_seen);
             }
@@ -730,7 +711,7 @@
         // ============================================
 
         socket.on('error', (data) => {
-            console.error('❌ Socket error:', data);
+            // console.error('❌ Socket error:', data);
             alert(data.message || 'An error occurred');
         });
 
@@ -742,7 +723,7 @@
             const headerName = document.querySelector('.user-message-header .user-name-label p:first-child');
             if (headerName) {
                 headerName.textContent = name;
-                console.log('✅ Updated header with:', name);
+                // console.log('✅ Updated header with:', name);
             }
         }
 
@@ -838,19 +819,19 @@
         // ============================================
 
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('📱 Attaching event listeners...');
+            // console.log('📱 Attaching event listeners...');
             
             // Send button
             const sendButton = document.getElementById('user-click');
             if (sendButton) {
                 sendButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    console.log('🖱️ Send button clicked');
+                    // console.log('🖱️ Send button clicked');
                     sendMessage();
                 });
-                console.log('✅ Send button listener attached');
+                // console.log('✅ Send button listener attached');
             } else {
-                console.error('❌ Send button not found!');
+                // console.error('❌ Send button not found!');
             }
             
             // Message input
@@ -860,7 +841,7 @@
                 messageInput.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        console.log('⏎ Enter key pressed');
+                        // console.log('⏎ Enter key pressed');
                         sendMessage();
                     }
                 });
@@ -887,12 +868,12 @@
                     }, 1000);
                 });
                 
-                console.log('✅ Message input listeners attached');
+                // console.log('✅ Message input listeners attached');
             } else {
-                console.error('❌ Message input not found!');
+                // console.error('❌ Message input not found!');
             }
             
-            console.log('✅ All event listeners attached');
+            // console.log('✅ All event listeners attached');
         });
 
         // ============================================
@@ -902,6 +883,6 @@
         window.openChat = openChat;
         window.sendMessage = sendMessage;
 
-        console.log('✅ Chat script loaded successfully');
+        // console.log('✅ Chat script loaded successfully');
     </script>
 {% endblock %}

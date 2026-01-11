@@ -10,10 +10,6 @@ clearSearch.addEventListener("click", () => {
   searchInput.value = "";
 });
 
-searchInput.addEventListener("click",(e)=>{
-  e.focus();
-})
-
 searchInput.addEventListener("keyup", () => {
   if (searchbox.style.display === "none" || searchbox.style.display === "") {
     searchbox.style.display = "block";
@@ -100,12 +96,8 @@ async function followUser(userId) {
       headers: { "Content-Type": "application/json" },
       body : JSON.stringify({user_id:userId})
     });
-    // console.log(response);
     const result = await response.json();
-    // console.log(result.message);
-    // console.log(result);
     const btn = document.querySelector(`#btn-${userId}`)
-    // console.log(btn);
     if (result.status === "followed") {
       btn.innerHTML = "Unfollow";
       btn.style.background = '#383b3b';
