@@ -10,8 +10,8 @@ socketio = SocketIO(cors_allowed_origins="*")
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = 'Bhavin'
-    app.config['MONGO_URI'] = "mongodb+srv://bhavin:bhavin@bhavin.eo9mktg.mongodb.net/chatapp?retryWrites=true&w=majority"
+    app.config['SECRET_KEY'] = '********'
+    app.config['MONGO_URI'] = "****************"
     # app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
 
     mongo.init_app(app)
