@@ -10,6 +10,10 @@ clearSearch.addEventListener("click", () => {
   searchInput.value = "";
 });
 
+searchInput.addEventListener("click",(e)=>{
+  e.focus();
+})
+
 searchInput.addEventListener("keyup", () => {
   if (searchbox.style.display === "none" || searchbox.style.display === "") {
     searchbox.style.display = "block";

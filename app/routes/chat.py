@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, session, url_for, redirect, rende
 from app import mongo
 from bson.objectid import ObjectId
 from datetime import datetime, timezone
-from pymongo.errors import PyMongoError,DuplicateKeyError,NetworkTimeout,OperationFailure
+from pymongo.errors import PyMongoError,DuplicateKeyError,NetworkTimeout,OperationFailure,CursorNotFound
 from bson.errors import InvalidId
 
 
@@ -322,72 +322,144 @@ def message(chat_id):
 @chat_bp.route('/search_chat', methods=['POST'])
 def search():
     """search route is user search and follow and unfollow user status update/change"""
-    data = request.get_json()
-    query = data.get("query", "").strip()
+    try:
+        data = request.get_json()
+        query = data.get("query", "").strip()
 
-    if not query:
-        return jsonify({"result": []})
-    
-    user_cursor = mongo.db.users.find({"name": {"$regex": query, "$options": "i"}})
-
-    user_follow = get_user_by_email(mongo.db, session['email'])
-
-    result = []
-    for user in user_cursor:
-        user_data = {
-            "_id": str(user['_id']),
-            "name": user['name'],
-            "email": user['email'],
-            "online": user.get('online', False),  # Include online status
-            "last_seen": user.get('last_seen') 
-        }
+        if not query:
+            return jsonify({"result": []})
         
-        if str(user['_id']) in user_follow['following'] and user_follow['email'] != user['email']:
-            user_data['status'] = 'Unfollow'
-            result.append(user_data)
-        elif user_follow['email'] != user['email']:
-            user_data['status'] = 'Follow'
-            result.append(user_data)
+        user_cursor = mongo.db.users.find({"name": {"$regex": query, "$options": "i"}})
 
-    return jsonify({"result": result})
+        user_follow = get_user_by_email(mongo.db, session['email'])
+
+        result = []
+        for user in user_cursor:
+            user_data = {
+                "_id": str(user['_id']),
+                "name": user['name'],
+                "email": user['email'],
+                "online": user.get('online', False),  # Include online status
+                "last_seen": user.get('last_seen') 
+            }
+            
+            if str(user['_id']) in user_follow['following'] and user_follow['email'] != user['email']:
+                user_data['status'] = 'Unfollow'
+                result.append(user_data)
+            elif user_follow['email'] != user['email']:
+                user_data['status'] = 'Follow'
+                result.append(user_data)
+
+        return jsonify({"result": result})
+    
+    except NetworkTimeout as e:
+        return jsonify({
+            "success": False,
+            "error": "Connection timeout. Please try again.",
+            "result": []
+        }), 500
+    
+    except OperationFailure as e:
+        return jsonify({
+            "success": False,
+            "error": "Database error occurred",
+            "result": []
+        }), 500
+    
+    except PyMongoError as e:
+        return jsonify({
+            "success": False,
+            "error": "Database error occurred",
+            "result": []
+        }), 500
+    
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": "An unexpected error occurred",
+            "result": []
+        }), 500
+
 
 
 @chat_bp.route('/follow_user', methods=['POST'])
 def follow():
     """follow route is follow and unfollow process"""
-    data = request.get_json()
-    user_to_follow_id = data.get('user_id')
+    try:
+        data = request.get_json()
+        user_to_follow_id = data.get('user_id')
 
-    current_user = mongo.db.users.find_one({'email': session['email'].strip().lower()})
+        current_user = mongo.db.users.find_one({'email': session['email'].strip().lower()})
+        
+        if str(current_user["_id"]) != user_to_follow_id:
+            if user_to_follow_id in current_user['following']:
+                # Unfollow
+                mongo.db.users.update_one(
+                    {"_id": current_user["_id"]},
+                    {"$pull": {"following": user_to_follow_id}}
+                )
+                mongo.db.users.update_one(
+                    {"_id": ObjectId(user_to_follow_id)},
+                    {"$pull": {"followers": str(current_user["_id"])}}
+                )
+                return jsonify({"message": "User unfollowed successfully", "status": "unfollowed"})
+            else:
+                # Follow
+                mongo.db.users.update_one(
+                    {"_id": current_user["_id"]},
+                    {"$addToSet": {"following": user_to_follow_id}}
+                )
+                mongo.db.users.update_one(
+                    {"_id": ObjectId(user_to_follow_id)},
+                    {"$addToSet": {"followers": str(current_user["_id"])}}
+                )
+                return jsonify({"message": "User followed successfully", "status": "followed"})
+    except InvalidId as e:
+        return jsonify({
+            "success": False,
+            "error": "Invalid ID format",
+            "message": "The provided user ID is invalid"
+        }), 400
     
-    if str(current_user["_id"]) != user_to_follow_id:
-        if user_to_follow_id in current_user['following']:
-            # Unfollow
-            mongo.db.users.update_one(
-                {"_id": current_user["_id"]},
-                {"$pull": {"following": user_to_follow_id}}
-            )
-            mongo.db.users.update_one(
-                {"_id": ObjectId(user_to_follow_id)},
-                {"$pull": {"followers": str(current_user["_id"])}}
-            )
-            return jsonify({"message": "User unfollowed successfully", "status": "unfollowed"})
-        else:
-            # Follow
-            mongo.db.users.update_one(
-                {"_id": current_user["_id"]},
-                {"$addToSet": {"following": user_to_follow_id}}
-            )
-            mongo.db.users.update_one(
-                {"_id": ObjectId(user_to_follow_id)},
-                {"$addToSet": {"followers": str(current_user["_id"])}}
-            )
-            return jsonify({"message": "User followed successfully", "status": "followed"})
-
+    except NetworkTimeout as e:
+        return jsonify({
+            "success": False,
+            "error": "Connection timeout",
+            "message": "Connection timed out. Please try again."
+        }), 500
+    
+    except OperationFailure as e:
+        return jsonify({
+            "success": False,
+            "error": "Database operation failed",
+            "message": "Failed to update follow status"
+        }), 500
+    
+    except PyMongoError as e:
+        return jsonify({
+            "success": False,
+            "error": "Database error",
+            "message": "A database error occurred"
+        }), 500
+    
+    except KeyError as e:
+        return jsonify({
+            "success": False,
+            "error": "Invalid request",
+            "message": "Required data is missing"
+        }), 400
+    
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": "Unexpected error",
+            "message": "An unexpected error occurred"
+        }), 500
+    
     return jsonify({"message": "Cannot follow yourself"})
 
 
-# ===== NEW ROUTES FOR ONLINE STATUS =====
+# ===== NEW ROU TES FOR ONLINE STATUS =====
 
 @chat_bp.route('/api/user_status/<user_id>', methods=['GET'])
 def api_user_status(user_id):
@@ -403,8 +475,40 @@ def api_user_status(user_id):
             'online': status['online'],
             'last_seen': status['last_seen'].strftime('%Y-%m-%d %H:%M:%S') if status['last_seen'] else None
         })
+    except InvalidId as e:
+        return jsonify({
+            'success': False,
+            'error': 'Invalid ID',
+            'message': 'User ID format is invalid'
+        }), 400
+    
+    except NetworkTimeout as e:
+        return jsonify({
+            'success': False,
+            'error': 'Timeout',
+            'message': 'Connection timeout. Please try again.'
+        }), 500
+    
+    except OperationFailure as e:
+        return jsonify({
+            'success': False,
+            'error': 'Database error',
+            'message': 'Failed to query user status'
+        }), 500
+    
+    except PyMongoError as e:
+        return jsonify({
+            'success': False,
+            'error': 'Database error',
+            'message': 'A database error occurred'
+        }), 500
+    
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error',
+            'message': 'An unexpected error occurred'
+        }), 500
 
 
 @chat_bp.route('/api/online_users', methods=['GET'])
@@ -419,16 +523,66 @@ def api_online_users():
         
         result = []
         for user in online_users:
-            result.append({
-                'user_id': str(user['_id']),
-                'name': user.get('name', 'Unknown'),
-                'email': user.get('email', ''),
-                'online': True
-            })
+            try:
+                result.append({
+                    'user_id': str(user['_id']),
+                    'name': user.get('name', 'Unknown'),
+                    'email': user.get('email', ''),
+                    'online': True
+                })
+            except (KeyError,TypeError) as e:
+                continue
         
         return jsonify({'users': result})
+
+    except CursorNotFound as e:
+        return jsonify({
+            'success': False,
+            'error': 'Query timeout',
+            'message': 'Database query timed out. Please try again.'
+        }), 500
+    
+    except NetworkTimeout as e:
+        return jsonify({
+            'success': False,
+            'error': 'Connection timeout',
+            'message': 'Connection to database timed out. Please try again.'
+        }), 500
+    
+    except OperationFailure as e:
+        return jsonify({
+            'success': False,
+            'error': 'Database operation failed',
+            'message': 'Failed to fetch online users'
+        }), 500
+    
+    except PyMongoError as e:
+        return jsonify({
+            'success': False,
+            'error': 'Database error',
+            'message': 'A database error occurred'
+        }), 500
+    
+    except KeyError as e:
+        return jsonify({
+            'success': False,
+            'error': 'Session error',
+            'message': 'Session data is invalid'
+        }), 500
+    
+    except TypeError as e:
+        return jsonify({
+            'success': False,
+            'error': 'Data type error',
+            'message': 'Invalid data format encountered'
+        }), 500
+    
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error',
+            'message': 'An unexpected error occurred'
+        }), 500
 
 
 @chat_bp.route('/api/update_online_status', methods=['POST'])
@@ -457,8 +611,50 @@ def api_update_online_status():
             'message': 'Status updated successfully',
             'online': online
         })
+    # except Exception as e:
+    #     return jsonify({'error': str(e)}), 500
+
+    except InvalidId as e:
+        return jsonify({
+            'success': False,
+            'error': 'Invalid ID',
+            'message': 'User ID format is invalid'
+        }), 500
+    
+    except NetworkTimeout as e:
+        return jsonify({
+            'success': False,
+            'error': 'Connection timeout',
+            'message': 'Connection timed out. Please try again.'
+        }), 500
+    
+    except OperationFailure as e:
+        return jsonify({
+            'success': False,
+            'error': 'Database operation failed',
+            'message': 'Failed to update status'
+        }), 500
+    
+    except PyMongoError as e:
+        return jsonify({
+            'success': False,
+            'error': 'Database error',
+            'message': 'A database error occurred'
+        }), 500
+    
+    except KeyError as e:
+        return jsonify({
+            'success': False,
+            'error': 'Invalid data',
+            'message': 'Required data is missing'
+        }), 500
+    
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error',
+            'message': 'An unexpected error occurred'
+        }), 500
 
 
 # ===== MIGRATION FUNCTION (Run once to add online fields to existing users) =====

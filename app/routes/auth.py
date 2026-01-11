@@ -1,50 +1,62 @@
 from flask import Blueprint,render_template,redirect,url_for,flash,session
 from app.forms import LoginForm,RegistrationForm
 from app import mongo # Import the mongo instanceed in __init__.py file 
-from app.routes.chat import get_all
 from werkzeug.security import generate_password_hash,check_password_hash
 from datetime import datetime
+from app.routes.chat import get_all
 
 auth_bp = Blueprint('auth',__name__)
 
 
 def insert_user(db, name, email, password):
     """Insert a new user with hashed password."""
-
-    users_collection = db.users
-    user_data = {
-        'name': name,
-        'email': email,
-        'password': generate_password_hash(password),  # In a real application, ensure to hash the password before storing it
-        'followers':[],
-        'following':['68f9b3f9b2baa9fbe8ad2bd9'],
-        'about':'Hi, I am use venture',
-        'lastSeen': datetime.now(),
-        'createdAt': datetime.now()
-    }
-    users_collection.insert_one(user_data)
+    try:
+        users_collection = db.users
+        user_data = {
+            'name': name,
+            'email': email,
+            'password': generate_password_hash(password),  # In a real application, ensure to hash the password before storing it
+            'followers':[],
+            'following':['68f9b3f9b2baa9fbe8ad2bd9'],
+            'about':'Hi, I am use venture',
+            'lastSeen': datetime.now(),
+            'createdAt': datetime.now()
+        }
+        users_collection.insert_one(user_data)
+    except Exception as e:
+        print(f"Error : {e}")
 
 def get_user_by_email(db, email):
     """Retrieve a user by email."""
+    try:
+        users_collection = db.users
+        return users_collection.find_one({'email': email.strip().lower()})
+    except Exception as e:
+        print(f"Error : {e}")
 
-    users_collection = db.users
-    return users_collection.find_one({'email': email.strip().lower()})
 
 def user_status_online(db,email):
     """Update user online status."""
-    changeStatus = db.users
-    changeStatus.update_one(
-        {'email':email},
-        {"$set":{"online":True}}
-    )   
+    try:
+        changeStatus = db.users
+        changeStatus.update_one(
+            {'email':email},
+            {"$set":{"online":True}}
+        )   
+    except Exception as e:
+        print(f"Error : {e}")
     
 def user_status_offline(db,email):
     """Update user offline status."""
-    changeStatus = db.users
-    changeStatus.update_one(
-        {'email':email},
-        {"$set":{"online":False}}
-    )  
+    try:
+        changeStatus = db.users
+        changeStatus.update_one(
+            {'email':email},
+            {"$set":{"online":False}}
+        )  
+    except Exception as e:
+        print(f"Error : {e}")
+
    
 @auth_bp.route("/")
 def dashboard():
@@ -57,7 +69,6 @@ def dashboard():
     users_followed = get_user_by_email(mongo.db,session['email'])
  
     data = users if users else []
-
 
     return render_template('index.html',user_list=data,users_followed=users_followed)
 
