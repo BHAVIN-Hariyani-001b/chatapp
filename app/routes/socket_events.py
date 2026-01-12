@@ -1,6 +1,6 @@
 # ===== app/socket_events.py =====
 from flask_socketio import emit, join_room, leave_room
-from flask import request
+from flask import request,session
 from app import mongo
 from bson.objectid import ObjectId
 from datetime import datetime,timezone
@@ -10,6 +10,29 @@ active_users = {}  # Format: {socket_id: {user_id, username, rooms, last_seen}}
 user_sockets = {}  # Format: {user_id: [socket_id1, socket_id2]} for multiple tabs
 
 def register_socket_events(socketio):
+
+    @socketio.on('join')
+    def handle_join(data):
+        # Access current_user safely here
+        user_id = str(session['user_id'])
+        username = session['name']
+
+        print(f"User connected: {username} ({user_id})")
+
+        # Add user to active_users and user_sockets
+        active_users[request.sid] = {
+            'user_id': user_id,
+            'username': username,
+            'rooms': [],
+            'last_seen': datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        }
+
+        if user_id not in user_sockets:
+            user_sockets[user_id] = []
+        user_sockets[user_id].append(request.sid)
+
+        emit('connection_response', {'data': f'{username} is connected'})
+
     
     @socketio.on('connect')
     def handle_connect():
