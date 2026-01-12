@@ -1,4 +1,4 @@
-from flask import Blueprint,render_template,redirect,url_for,flash,session
+from flask import Blueprint,render_template,redirect,url_for,flash,session,request
 from app.forms import LoginForm,RegistrationForm
 from app import mongo # Import the mongo instanceed in __init__.py file 
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -75,8 +75,8 @@ def dashboard():
 @auth_bp.route("/login",methods=["POST","GET"])
 def login():
     """Login route."""
-
     form = LoginForm()
+    print(request.form['email'])  # ✅ works, inside request
     if form.validate_on_submit():
         # session.permanent = True
         email = form.email.data.strip().lower()
@@ -96,7 +96,7 @@ def login():
                 flash("User does not exist. Please register first.","error")
             else:
                 flash("Incorrect password. Please try again.","error")
-            return redirect(url_for('auth.login'))
+            return render_template('login.html', form=form)
         
     return render_template('login.html',form=form)
 
