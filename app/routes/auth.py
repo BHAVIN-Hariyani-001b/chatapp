@@ -75,6 +75,7 @@ def dashboard():
 @auth_bp.route("/login",methods=["POST","GET"])
 def login():
     """Login route."""
+
     form = LoginForm()
     print(request.form['email'])  # ✅ works, inside request
     if form.validate_on_submit():
@@ -96,7 +97,7 @@ def login():
                 flash("User does not exist. Please register first.","error")
             else:
                 flash("Incorrect password. Please try again.","error")
-            return render_template('login.html', form=form)
+            return redirect(url_for('auth.login'))
         
     return render_template('login.html',form=form)
 
