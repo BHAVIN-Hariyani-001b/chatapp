@@ -16,6 +16,9 @@ def create_app():
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['MONGO_URI'] = os.getenv('MONGO_URL')
+    app.config['SESSION_COOKIE_SECURE'] = True 
+    app.config['WTF_CSRF_ENABLED'] = True
+
 
     mongo.init_app(app)
     socketio.init_app(app)
