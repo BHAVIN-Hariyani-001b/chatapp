@@ -1,7 +1,10 @@
 # 💬 Real-Time Chat Application
 
 A full‑stack **real‑time chat application** built using **HTML, CSS, JavaScript, Python (Flask + Socket.IO), and MongoDB**. This project demonstrates how to create a modern chat app with real‑time messaging, user authentication, and message persistence.
+---
+## 🔗 Live Demo
 
+👉 [View Website](https://chatapp-kxnu.onrender.com/) 
 ---
 
 ![chat App Screenshot1](image/Screenshot1.png)
