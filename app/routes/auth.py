@@ -72,12 +72,11 @@ def dashboard():
 
     return render_template('index.html',user_list=data,users_followed=users_followed)
 
-@auth_bp.route("/login",methods=["POST","GET"])
+@auth_bp.route("/login",methods=["GET","POST"])
 def login():
     """Login route."""
 
     form = LoginForm()
-    print(request.form['email'])  # ✅ works, inside request
     if form.validate_on_submit():
         # session.permanent = True
         email = form.email.data.strip().lower()
@@ -102,7 +101,7 @@ def login():
     return render_template('login.html',form=form)
 
 
-@auth_bp.route("/register",methods=["POST","GET"])
+@auth_bp.route("/register",methods=["GET","POST"])
 def register():
     """Registration route."""
 
