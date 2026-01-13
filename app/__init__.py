@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-
 mongo = PyMongo() 
 socketio = SocketIO(cors_allowed_origins="*")
 
@@ -19,9 +17,16 @@ def create_app():
     app.config['SESSION_COOKIE_SECURE'] = True 
     app.config['WTF_CSRF_ENABLED'] = True
 
+    print(f"SECRET_KEY loaded: {'✅' if app.config['SECRET_KEY'] else '❌'}")
+    print(f"MONGO_URI loaded: {'✅' if app.config['MONGO_URI'] else '❌'}")
 
-    mongo.init_app(app)
-    socketio.init_app(app)
+    try:
+        mongo.init_app(app)
+        socketio.init_app(app)
+        mongo.db.command('ping')
+        print("✅ MongoDB connected successfully!")
+    except Exception as e:
+        print(f"❌ MongoDB connection error: {e}")
 
     from app.routes.auth import auth_bp
     from app.routes.chat import chat_bp
